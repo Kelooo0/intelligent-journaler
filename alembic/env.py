@@ -5,6 +5,7 @@ from sqlalchemy import pool
 
 from app.database import Base
 from app.config import settings
+from app.models import UserModel, EntryModel, TagModel
 
 from alembic import context
 

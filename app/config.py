@@ -2,6 +2,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from urllib.parse import quote_plus
 
 class Settings(BaseSettings):
+    SECRET_KEY: str
+    ALGORITHM: str = 'HS256'
+
     DB_USER: str
     DB_PASS: str
     DB_HOST: str
