@@ -1,9 +1,10 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from urllib.parse import quote_plus
 
+
 class Settings(BaseSettings):
     SECRET_KEY: str
-    ALGORITHM: str = 'HS256'
+    ALGORITHM: str = "HS256"
 
     DB_USER: str
     DB_PASS: str
@@ -14,7 +15,9 @@ class Settings(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         pw = quote_plus(self.DB_PASS)
-        return f'postgresql://{self.DB_USER}:{pw}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
+        return f"postgresql://{self.DB_USER}:{pw}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
-    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+
 settings = Settings()
