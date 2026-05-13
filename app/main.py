@@ -8,6 +8,10 @@ app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(entries.router, prefix="/entries", tags=["entries"])
 
 
-@app.get("/")
-def main():
-    return {"message": "App working properly"}
+@app.get("/", tags=["Health Check"])
+def health_check():
+    return {
+        "status": "ok",
+        "project": "Intelligent Journaler API",
+        "version": "1.0.0"
+        }

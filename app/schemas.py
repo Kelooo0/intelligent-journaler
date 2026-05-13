@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, field_validator
 from typing import Optional
 from datetime import datetime
+
 
 class UserBase(BaseModel):
     email: EmailStr
@@ -25,15 +26,27 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     email: str
 
+
 class EntryBase(BaseModel):
-    content: str
+    content: str = Field(..., min_length=30)
+
+    @field_validator("content")
+    @classmethod
+    def validate_content(cls, v: str | None) -> str | None:
+        if v is not None:
+            v = v.strip()
+            if not v:
+                raise ValueError("Invalid content")
+        return v
 
 
 class EntryCreate(EntryBase):
     pass
 
+
 class EntryUpdate(EntryBase):
-    content: Optional[str] = None
+    content: Optional[str] = Field(None, min_length=30)
+
 
 class Entry(EntryBase):
     id: int
@@ -46,3 +59,10 @@ class Entry(EntryBase):
 
     class Config:
         from_attributes = True
+
+
+class EntryAnalysis(BaseModel):
+    summary: str = "Analysis unavailable"
+    mood: str = "Unknown"
+    sentiment_score: float = 0.0
+    tags: list[str] = Field(default_factory=list)
