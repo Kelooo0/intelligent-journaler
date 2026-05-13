@@ -12,6 +12,8 @@ from app.services.entries_service import (
     delete_entry_service,
 )
 from app.models import EntryModel
+from datetime import date
+from typing import Optional
 
 router = APIRouter()
 
@@ -36,9 +38,12 @@ def validate_entry(
 
 @router.get("/", response_model=List[Entry])
 def get_entries(
-    db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None
 ) -> List[EntryModel]:
-    return get_entries_service(db, current_user)
+    return get_entries_service(db, current_user, start_date, end_date)
 
 
 @router.get("/{id}", response_model=Entry)
