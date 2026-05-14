@@ -29,15 +29,18 @@ def get_entries_service(
             t = t.strip().lower()
             if not t:
                 raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid tag input, tag can\'t be empty"
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid tag input, tag can't be empty",
                 )
             if len(t) < 3:
                 raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid tag input, tag must be at least 3 characters"
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid tag input, tag must be at least 3 characters",
                 )
             if len(t) > 20:
                 raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid tag input, tag must be less than 20 characters"
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid tag input, tag must be less than 20 characters",
                 )
             cleaned_tags.append(t)
         query = query.filter(EntryModel.tags.any(TagModel.name.in_(cleaned_tags)))
@@ -47,7 +50,7 @@ def get_entries_service(
 def create_entry_service(
     entry_data: EntryCreate, db: Session, current_user: UserModel
 ) -> EntryModel:
-    tags = get_tags_str(db)
+    tags = get_tags_str(db, current_user.id)
     analysis = ai_service.analyze_entry(entry_data.content, tags)
     new_entry = EntryModel(
         content=entry_data.content,
@@ -56,7 +59,7 @@ def create_entry_service(
         mood=analysis.mood,
         sentiment_score=analysis.sentiment_score,
     )
-    db_tags = process_tags(analysis.tags, db)
+    db_tags = process_tags(analysis.tags, db, current_user.id)
     new_entry.tags = db_tags
     db.add(new_entry)
     db.commit()
@@ -74,12 +77,12 @@ def update_entry_service(
         setattr(entry, key, value)
 
     if content_changed:
-        tags = get_tags_str(db)
+        tags = get_tags_str(db, entry.user_id)
         analysis = ai_service.analyze_entry(entry.content, tags)
         entry.summary = analysis.summary
         entry.mood = analysis.mood
         entry.sentiment_score = analysis.sentiment_score
-        db_tags = process_tags(analysis.tags, db)
+        db_tags = process_tags(analysis.tags, db, entry.user_id)
         entry.tags = db_tags
     db.commit()
     return entry

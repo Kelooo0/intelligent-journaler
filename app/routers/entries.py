@@ -42,7 +42,10 @@ def get_entries(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
     tags: Optional[list[str]] = Query(
-        None, min_length=1, max_length=5, description="Add up to 5 tags (optional)"
+        None,
+        min_length=1,
+        max_length=5,
+        description="Add up to 5 tags (optional). Each tag between 3 and 20 characters.",
     ),
 ) -> list[EntryModel]:
     return get_entries_service(db, current_user, start_date, end_date, tags)

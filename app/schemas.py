@@ -47,12 +47,15 @@ class EntryCreate(EntryBase):
 class EntryUpdate(EntryBase):
     content: Optional[str] = Field(None, min_length=30)
 
+
 class Tag(BaseModel):
     id: int
+    user_id: int
     name: str
 
     class Config:
         from_attributes = True
+
 
 class Entry(EntryBase):
     id: int
@@ -73,5 +76,3 @@ class EntryAnalysis(BaseModel):
     mood: str = "Unknown"
     sentiment_score: float = 0.0
     tags: list[str] = Field(default_factory=list)
-
-

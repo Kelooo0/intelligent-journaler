@@ -41,6 +41,8 @@ class TagModel(Base):
     __tablename__ = "tags"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
+    name = Column(String(20), nullable=False, index=True)
+
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     entries = relationship("EntryModel", secondary=entry_tags, back_populates="tags")
