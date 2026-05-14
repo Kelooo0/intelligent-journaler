@@ -1,12 +1,20 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from app.models import UserModel, EntryModel
+from app.models import UserModel, EntryModel, TagModel
 from app.schemas import EntryCreate, EntryUpdate
-from typing import List, Optional
+from typing import Optional
 from app.services.ai_service import ai_service
 from app.services.tags_service import get_tags_str, process_tags
 from datetime import date, timedelta, time, datetime
 
-def get_entries_service(db: Session, current_user: UserModel, start_date: Optional[date] = None, end_date: Optional[date] = None) -> List[EntryModel]:
+
+def get_entries_service(
+    db: Session,
+    current_user: UserModel,
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
+    tags_list: Optional[list[str]] = None,
+) -> list[EntryModel]:
     query = db.query(EntryModel).filter(EntryModel.user_id == current_user.id)
     if start_date:
         start_dt = datetime.combine(start_date, time.min)
@@ -15,6 +23,24 @@ def get_entries_service(db: Session, current_user: UserModel, start_date: Option
         next_day = end_date + timedelta(days=1)
         end_dt = datetime.combine(next_day, time.min)
         query = query.filter(EntryModel.created_at < end_dt)
+    if tags_list:
+        cleaned_tags = []
+        for t in tags_list:
+            t = t.strip().lower()
+            if not t:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid tag input, tag can\'t be empty"
+                )
+            if len(t) < 3:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid tag input, tag must be at least 3 characters"
+                )
+            if len(t) > 20:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid tag input, tag must be less than 20 characters"
+                )
+            cleaned_tags.append(t)
+        query = query.filter(EntryModel.tags.any(TagModel.name.in_(cleaned_tags)))
     return query.order_by(EntryModel.created_at.desc()).all()
 
 

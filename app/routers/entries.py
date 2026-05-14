@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Query
 from app.schemas import Entry, EntryCreate, EntryUpdate
-from typing import List
 from app.database import get_db
 from app.models import UserModel
 from app.services.auth_service import get_current_user
@@ -36,14 +35,17 @@ def validate_entry(
     return entry
 
 
-@router.get("/", response_model=List[Entry])
+@router.get("/", response_model=list[Entry])
 def get_entries(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
     start_date: Optional[date] = None,
-    end_date: Optional[date] = None
-) -> List[EntryModel]:
-    return get_entries_service(db, current_user, start_date, end_date)
+    end_date: Optional[date] = None,
+    tags: Optional[list[str]] = Query(
+        None, min_length=1, max_length=5, description="Add up to 5 tags (optional)"
+    ),
+) -> list[EntryModel]:
+    return get_entries_service(db, current_user, start_date, end_date, tags)
 
 
 @router.get("/{id}", response_model=Entry)
