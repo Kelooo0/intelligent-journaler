@@ -10,3 +10,4 @@ argon2-cffi==25.1.0
 pyjwt==2.12.1
 python-multipart==0.0.27
 google-genai==2.1.0
+pytest==9.0.3
