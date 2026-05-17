@@ -10,6 +10,11 @@ First, you need to register and sign in; then, you can create, read, update, and
 - Filtering by tags and date
 - AI generated insights
 
+## Showcase
+
+![Post method in Swagger](docs/img/post_method.png)
+![Tests showcase](docs/img/tests.png)
+
 ## Installation
 
 ### 1. Clone the repository
