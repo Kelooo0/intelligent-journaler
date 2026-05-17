@@ -29,10 +29,10 @@ First, you need to register and sign in; then, you can create, read, update, and
 1. First download and run docker desktop app
 2. Make sure you docker Docker Desktop app is running
 3. Choose one of the options below to run in your designated terminal
-3. Development Variant: docker compose up --build
-4. Production Variant: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-5. After running the app go to localhost:8000/docs on dev variant or localhost:80/docs on prod variant
-6. Then after you register and sign in you can test all endpoints using swagger
+    - Development Variant: docker compose up --build
+    - Production Variant: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+4. After running the app go to localhost:8000/docs on dev variant or localhost:80/docs on prod variant
+5. Then after you register and sign in you can test all endpoints using swagger
 
 ## Project structure
 
