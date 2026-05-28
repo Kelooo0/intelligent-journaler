@@ -12,7 +12,7 @@ First, you need to register and sign in; then, you can create, read, update, and
 
 ## Showcase
 
-![Post method in Swagger](assetss/img/post_method.png)
+![Post method in Swagger](assets/img/post_method.png)
 ![Tests showcase](assets/img/tests.png)
 
 ## Installation
