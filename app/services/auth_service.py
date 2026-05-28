@@ -25,7 +25,7 @@ class AuthService:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists"
             )
-
+ 
     @staticmethod
     def get_password_hash(password: str) -> str:
         return pwd_context.hash(password)

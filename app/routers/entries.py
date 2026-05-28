@@ -47,14 +47,14 @@ def get_entries(
         max_length=5,
         description="Add up to 5 tags (optional). Each tag between 3 and 20 characters.",
     ),
-) -> list[EntryModel]:
+) -> list[Entry]:
     return get_entries_service(db, current_user, start_date, end_date, tags)
 
 
 @router.get("/{id}", response_model=Entry)
 def get_entry(
     entry: EntryModel = Depends(validate_entry), db: Session = Depends(get_db)
-) -> EntryModel:
+) -> Entry:
     return entry
 
 
@@ -63,7 +63,7 @@ def create_entry(
     entry_data: EntryCreate,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
-) -> EntryModel:
+) -> Entry:
     return create_entry_service(entry_data, db, current_user)
 
 
@@ -72,7 +72,7 @@ def update_entry(
     update_data: EntryUpdate,
     entry: EntryModel = Depends(validate_entry),
     db: Session = Depends(get_db),
-) -> EntryModel:
+) -> Entry:
     return update_entry_service(update_data, entry, db)
 
 

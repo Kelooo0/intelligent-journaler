@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.post("/register", response_model=User, status_code=201)
-def register(user_data: UserCreate, db: Session = Depends(get_db)) -> UserModel:
+def register(user_data: UserCreate, db: Session = Depends(get_db)) -> User:
     auth_service.check_user_exists(user_data.email, db)
     return auth_service.register_user(user_data, db)
 
