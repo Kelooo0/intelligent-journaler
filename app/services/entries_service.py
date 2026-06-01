@@ -1,11 +1,13 @@
+from datetime import date, datetime, time, timedelta
+from typing import Optional
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from app.models import UserModel, EntryModel, TagModel
+
+from app.models import EntryModel, TagModel, UserModel
 from app.schemas import EntryCreate, EntryUpdate
-from typing import Optional
 from app.services.ai_service import ai_service
 from app.services.tags_service import get_tags_str, process_tags
-from datetime import date, timedelta, time, datetime
 
 
 def get_entries_service(
@@ -47,11 +49,11 @@ def get_entries_service(
     return query.order_by(EntryModel.created_at.desc()).all()
 
 
-def create_entry_service(
+async def create_entry_service(
     entry_data: EntryCreate, db: Session, current_user: UserModel
 ) -> EntryModel:
     tags = get_tags_str(db, current_user.id)
-    analysis = ai_service.analyze_entry(entry_data.content, tags)
+    analysis = await ai_service.analyze_entry(entry_data.content, tags)
     new_entry = EntryModel(
         content=entry_data.content,
         user_id=current_user.id,

@@ -1,7 +1,9 @@
+import json
+from fastapi import HTTPException, status
 from google import genai
 from google.genai import types
+
 from app.config import settings
-import json
 from app.schemas import EntryAnalysis
 
 
@@ -10,7 +12,7 @@ class AIService:
         self.client = genai.Client(api_key=settings.API_KEY)
         self.model_id = "gemini-2.5-flash"
 
-    def analyze_entry(self, content: str, tags: str) -> EntryAnalysis:
+    async def analyze_entry(self, content: str, tags: str) -> EntryAnalysis:
         try:
             prompt = f"""
                 Content: {content}
@@ -35,7 +37,7 @@ class AIService:
                     "tags": ["tag1", "tag2"]
                 }}
             """
-            response = self.client.models.generate_content(
+            response = await self.client.aio.models.generate_content(
                 model=self.model_id,
                 contents=prompt,
                 config=types.GenerateContentConfig(
@@ -46,8 +48,7 @@ class AIService:
             data = json.loads(response.text)
             return EntryAnalysis(**data)
         except Exception as exc:
-            print(f"AIService error: {exc}")
-            return EntryAnalysis()
+            raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=f"An AIService error occured, {exc}")
 
 
 ai_service = AIService()

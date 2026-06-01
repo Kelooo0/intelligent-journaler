@@ -1,18 +1,19 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Query
-from app.schemas import Entry, EntryCreate, EntryUpdate
-from app.database import get_db
-from app.models import UserModel
-from app.services.auth_service import get_current_user
-from sqlalchemy.orm import Session
-from app.services.entries_service import (
-    get_entries_service,
-    create_entry_service,
-    update_entry_service,
-    delete_entry_service,
-)
-from app.models import EntryModel
 from datetime import date
 from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy.orm import Session
+
+from app.database import get_db
+from app.models import EntryModel, UserModel
+from app.schemas import Entry, EntryCreate, EntryUpdate
+from app.services.auth_service import get_current_user
+from app.services.entries_service import (
+    create_entry_service,
+    delete_entry_service,
+    get_entries_service,
+    update_entry_service,
+)
 
 router = APIRouter()
 
@@ -59,12 +60,12 @@ def get_entry(
 
 
 @router.post("/", response_model=Entry, status_code=status.HTTP_201_CREATED)
-def create_entry(
+async def create_entry(
     entry_data: EntryCreate,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ) -> Entry:
-    return create_entry_service(entry_data, db, current_user)
+    return await create_entry_service(entry_data, db, current_user)
 
 
 @router.patch("/{id}", response_model=Entry)
