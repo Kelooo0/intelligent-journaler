@@ -70,7 +70,7 @@ class Entry(EntryBase):
 
 
 class EntryAnalysis(BaseModel):
-    summary: str = "Analysis unavailable"
-    mood: str = "Unknown"
-    sentiment_score: float = 0.0
-    tags: list[str] = Field(default_factory=list)
+    summary: str = Field(default="Analysis unavailable", description="Create a very short summary (max 30 chars)")
+    mood: str = Field(default="Unknown", description="Identify the predominant emotion in one word")
+    sentiment_score: float = Field(default=0.0, description="Score it from -1.0 (negative) to 1.0 (positive)")
+    tags: list[str] = Field(default_factory=list, description="Generate up to 5 relevant tags. Use matching tags from 'Available existing tags' if they fit; otherwise, create new ones in the same language as the content (nominative case)")

@@ -20,34 +20,27 @@ class AIService:
                 Available existing tags: {tags}
 
                 TASK:
-                Analyze the journal entry provided in "Content".
-                1. Summary: Create a very short summary (max 30 chars).
-                2. Mood: Identify the predominant emotion in one word.
-                3. Sentiment: Score it from -1.0 (negative) to 1.0 (positive).
-                4. Tags: Generate up to 5 relevant tags. Use matching tags from "Available existing tags" if they fit; otherwise, create new ones in the same language as the content (nominative case).
+                Analyze the journal entry provided in 'Content'.
 
                 LANGUAGE:
                 Respond in the same language as the Content.
 
-                FORMAT:
-                Return ONLY a JSON object. No preamble, no markdown code blocks.
-                {{
-                    "summary": "...",
-                    "mood": "...",
-                    "sentiment_score": 0.0,
-                    "tags": ["tag1", "tag2"]
-                }}
+                RULES FOR TAGS:
+                1. Every tag must be a noun in the singular form (base form, e.g., "training", "work", "sadness").
+                2. Never use plurals, verbs, or inflected forms (e.g., DO NOT use "trainings", "working", "sadly").
+                3. Write all tags in lowercase.
             """
             response = await self.client.aio.models.generate_content(
                 model=self.model_id,
                 contents=prompt,
                 config=types.GenerateContentConfig(
-                    response_mime_type="application/json"
+                    response_mime_type="application/json",
+                    response_schema=EntryAnalysis,
+                    temperature=0.1,
                 ),
             )
-            print(response.text)
-            data = json.loads(response.text)
-            return EntryAnalysis(**data)
+            data = EntryAnalysis.model_validate_json(response.text)
+            return data
         except Exception:
             raise HTTPException(
                 status_code=status.HTTP_502_BAD_GATEWAY,
