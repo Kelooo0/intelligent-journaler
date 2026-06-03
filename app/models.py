@@ -1,7 +1,8 @@
-from app.database import Base
-from sqlalchemy import Table, Column, Integer, ForeignKey, Text, String, Float, DateTime
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
+from app.database import Base
 
 
 class UserModel(Base):
@@ -10,7 +11,7 @@ class UserModel(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
 
-    entries = relationship("EntryModel", back_populates="owner")
+    entries = relationship("EntryModel", back_populates="owner", lazy="selectin")
 
 
 entry_tags = Table(
@@ -33,8 +34,10 @@ class EntryModel(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    owner = relationship("UserModel", back_populates="entries")
-    tags = relationship("TagModel", secondary=entry_tags, back_populates="entries")
+    owner = relationship("UserModel", back_populates="entries", lazy="joined")
+    tags = relationship(
+        "TagModel", secondary=entry_tags, back_populates="entries", lazy="selectin"
+    )
 
 
 class TagModel(Base):
@@ -45,4 +48,6 @@ class TagModel(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    entries = relationship("EntryModel", secondary=entry_tags, back_populates="tags")
+    entries = relationship(
+        "EntryModel", secondary=entry_tags, back_populates="tags", lazy="selectin"
+    )

@@ -1,5 +1,9 @@
-def test_register_client(client):
-    response = client.post(
+import pytest
+
+
+@pytest.mark.asyncio
+async def test_register_client(client, db_session):
+    response = await client.post(
         "/auth/register", json={"email": "user@example.com", "password": "password"}
     )
 
@@ -8,12 +12,13 @@ def test_register_client(client):
     assert response.json()["email"] == "user@example.com"
 
 
-def test_login_success(client, db_session):
-    client.post(
+@pytest.mark.asyncio
+async def test_login_success(client, db_session):
+    await client.post(
         "/auth/register", json={"email": "user@example.com", "password": "password"}
     )
 
-    response = client.post(
+    response = await client.post(
         "/auth/login", data={"username": "user@example.com", "password": "password"}
     )
 
@@ -22,12 +27,13 @@ def test_login_success(client, db_session):
     assert response.json()["token_type"] == "bearer"
 
 
-def test_login_wrong_password(client, db_session):
-    client.post(
+@pytest.mark.asyncio
+async def test_login_wrong_password(client, db_session):
+    await client.post(
         "/auth/register", json={"email": "user@example.com", "password": "password"}
     )
 
-    response = client.post(
+    response = await client.post(
         "/auth/login", data={"username": "user@example.com", "password": "password1"}
     )
 

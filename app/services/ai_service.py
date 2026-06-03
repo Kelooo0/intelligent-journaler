@@ -1,4 +1,5 @@
 import json
+
 from fastapi import HTTPException, status
 from google import genai
 from google.genai import types
@@ -47,8 +48,11 @@ class AIService:
             print(response.text)
             data = json.loads(response.text)
             return EntryAnalysis(**data)
-        except Exception as exc:
-            raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=f"An AIService error occured, {exc}")
+        except Exception:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="An AIService error occured",
+            )
 
 
 ai_service = AIService()

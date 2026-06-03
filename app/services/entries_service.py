@@ -2,7 +2,8 @@ from datetime import date, datetime, time, timedelta
 from typing import Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import EntryModel, TagModel, UserModel
 from app.schemas import EntryCreate, EntryUpdate
@@ -10,17 +11,17 @@ from app.services.ai_service import ai_service
 from app.services.tags_service import get_tags_str, process_tags
 
 
-def get_entries_service(
-    db: Session,
+async def get_entries_service(
+    db: AsyncSession,
     current_user: UserModel,
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
     tags_list: Optional[list[str]] = None,
 ) -> list[EntryModel]:
-    query = db.query(EntryModel).filter(EntryModel.user_id == current_user.id)
+    query = select(EntryModel).where(EntryModel.user_id == current_user.id)
     if start_date:
         start_dt = datetime.combine(start_date, time.min)
-        query = query.filter(EntryModel.created_at > start_dt)
+        query = query.filter(EntryModel.created_at >= start_dt)
     if end_date:
         next_day = end_date + timedelta(days=1)
         end_dt = datetime.combine(next_day, time.min)
@@ -37,22 +38,24 @@ def get_entries_service(
             if len(t) < 3:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Invalid tag input, tag must be at least 3 characters",
+                    detail=f"{t} is invalid, tag must be at least 3 characters",
                 )
             if len(t) > 20:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Invalid tag input, tag must be less than 20 characters",
+                    detail=f"{t} is invalid, tag must be less than 20 characters",
                 )
             cleaned_tags.append(t)
         query = query.filter(EntryModel.tags.any(TagModel.name.in_(cleaned_tags)))
-    return query.order_by(EntryModel.created_at.desc()).all()
+    query = query.order_by(EntryModel.created_at.desc())
+    result = await db.execute(query)
+    return result.scalars().all()
 
 
 async def create_entry_service(
-    entry_data: EntryCreate, db: Session, current_user: UserModel
+    entry_data: EntryCreate, db: AsyncSession, current_user: UserModel
 ) -> EntryModel:
-    tags = get_tags_str(db, current_user.id)
+    tags = await get_tags_str(db, current_user.id)
     analysis = await ai_service.analyze_entry(entry_data.content, tags)
     new_entry = EntryModel(
         content=entry_data.content,
@@ -61,16 +64,16 @@ async def create_entry_service(
         mood=analysis.mood,
         sentiment_score=analysis.sentiment_score,
     )
-    db_tags = process_tags(analysis.tags, db, current_user.id)
+    db_tags = await process_tags(analysis.tags, db, current_user.id)
     new_entry.tags = db_tags
     db.add(new_entry)
-    db.commit()
-    db.refresh(new_entry)
+    await db.commit()
+    await db.refresh(new_entry)
     return new_entry
 
 
-def update_entry_service(
-    update_data: EntryUpdate, entry: EntryModel, db: Session
+async def update_entry_service(
+    update_data: EntryUpdate, entry: EntryModel, db: AsyncSession
 ) -> EntryModel:
     update_dict = update_data.model_dump(exclude_unset=True)
     new_content = update_dict.get("content")
@@ -79,18 +82,18 @@ def update_entry_service(
         setattr(entry, key, value)
 
     if content_changed:
-        tags = get_tags_str(db, entry.user_id)
-        analysis = ai_service.analyze_entry(entry.content, tags)
+        tags = await get_tags_str(db, entry.user_id)
+        analysis = await ai_service.analyze_entry(entry.content, tags)
         entry.summary = analysis.summary
         entry.mood = analysis.mood
         entry.sentiment_score = analysis.sentiment_score
-        db_tags = process_tags(analysis.tags, db, entry.user_id)
+        db_tags = await process_tags(analysis.tags, db, entry.user_id)
         entry.tags = db_tags
-    db.commit()
+    await db.commit()
     return entry
 
 
-def delete_entry_service(entry: EntryModel, db: Session) -> None:
-    db.delete(entry)
-    db.commit()
+async def delete_entry_service(entry: EntryModel, db: AsyncSession) -> None:
+    await db.delete(entry)
+    await db.commit()
     return None

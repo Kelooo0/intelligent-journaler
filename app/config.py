@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     API_KEY: str
-    TEST_DATABASE_URL: str = "sqlite:///:memory:"
+    TEST_DATABASE_URL: str = "sqlite+aiosqlite:///:memory:"
 
     DB_USER: str
     DB_PASS: str
