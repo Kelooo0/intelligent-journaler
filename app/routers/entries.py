@@ -1,5 +1,4 @@
 from datetime import date
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
@@ -41,9 +40,9 @@ async def validate_entry(
 async def get_entries(
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
-    start_date: Optional[date] = None,
-    end_date: Optional[date] = None,
-    tags: Optional[list[str]] = Query(
+    start_date: date | None = None,
+    end_date: date | None = None,
+    tags: list[str] | None = Query(
         None,
         min_length=1,
         max_length=5,

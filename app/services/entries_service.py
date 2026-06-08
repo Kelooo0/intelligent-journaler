@@ -1,5 +1,4 @@
 from datetime import date, datetime, time, timedelta
-from typing import Optional
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
@@ -14,9 +13,9 @@ from app.services.tags_service import get_tags_str, process_tags
 async def get_entries_service(
     db: AsyncSession,
     current_user: UserModel,
-    start_date: Optional[date] = None,
-    end_date: Optional[date] = None,
-    tags_list: Optional[list[str]] = None,
+    start_date: date | None = None,
+    end_date: date | None = None,
+    tags_list: list[str] | None = None,
 ) -> list[EntryModel]:
     query = select(EntryModel).where(EntryModel.user_id == current_user.id)
     if start_date:

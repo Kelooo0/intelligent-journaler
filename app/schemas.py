@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
@@ -45,7 +44,7 @@ class EntryCreate(EntryBase):
 
 
 class EntryUpdate(EntryBase):
-    content: Optional[str] = Field(None, min_length=30)
+    content: str | None = Field(None, min_length=30)
 
 
 class Tag(BaseModel):
@@ -60,9 +59,9 @@ class Entry(EntryBase):
     id: int
     user_id: int
     content: str
-    summary: Optional[str] = None
-    mood: Optional[str] = None
-    sentiment_score: Optional[float] = None
+    summary: str | None = None
+    mood: str | None = None
+    sentiment_score: float | None = None
     created_at: datetime
     tags: list[Tag] = []
 
@@ -70,7 +69,17 @@ class Entry(EntryBase):
 
 
 class EntryAnalysis(BaseModel):
-    summary: str = Field(default="Analysis unavailable", description="Create a very short summary (max 30 chars)")
-    mood: str = Field(default="Unknown", description="Identify the predominant emotion in one word")
-    sentiment_score: float = Field(default=0.0, description="Score it from -1.0 (negative) to 1.0 (positive)")
-    tags: list[str] = Field(default_factory=list, description="Generate up to 5 relevant tags. Use matching tags from 'Available existing tags' if they fit; otherwise, create new ones in the same language as the content (nominative case)")
+    summary: str = Field(
+        default="Analysis unavailable",
+        description="Create a very short summary (max 30 chars)",
+    )
+    mood: str = Field(
+        default="Unknown", description="Identify the predominant emotion in one word"
+    )
+    sentiment_score: float = Field(
+        default=0.0, description="Score it from -1.0 (negative) to 1.0 (positive)"
+    )
+    tags: list[str] = Field(
+        default_factory=list,
+        description="Generate up to 5 relevant tags. Use matching tags from 'Available existing tags' if they fit; otherwise, create new ones in the same language as the content (nominative case)",
+    )
