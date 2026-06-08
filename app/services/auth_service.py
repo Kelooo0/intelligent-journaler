@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta, timezone
 
+import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,7 +12,6 @@ from app.database import get_db
 from app.models import UserModel
 from app.schemas import TokenData, UserCreate
 
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 ALGORITHM = settings.ALGORITHM
 SECRET_KEY = settings.SECRET_KEY
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
@@ -33,7 +32,10 @@ class AuthService:
 
     @staticmethod
     def get_password_hash(password: str) -> str:
-        return pwd_context.hash(password)
+        pw_bytes = password.encode("utf-8")
+        salt = bcrypt.gensalt()
+        pw_hashed = bcrypt.hashpw(pw_bytes, salt)
+        return pw_hashed.decode("utf-8")
 
     async def register_user(self, user_data: UserCreate, db: AsyncSession) -> UserModel:
         password_hash = self.get_password_hash(user_data.password)
@@ -45,7 +47,7 @@ class AuthService:
 
     @staticmethod
     def verify_password(password: str, password_hash: str) -> bool:
-        return pwd_context.verify(password, password_hash)
+        return bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8"))
 
     async def authenticate_user(
         self, email: str, password: str, db: AsyncSession
