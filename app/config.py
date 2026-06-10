@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     API_KEY: str
     TEST_DATABASE_URL: str = "sqlite+aiosqlite:///:memory:"
+    LOG_LEVEL: str = "INFO"
 
     DB_USER: str
     DB_PASS: str

@@ -1,8 +1,14 @@
 from fastapi import FastAPI
 
+from app.logging_config import setup_logging
+from app.middleware import log_request_middleware
 from app.routers import auth, entries
 
+setup_logging()
+
 app = FastAPI()
+
+app.middleware("http")(log_request_middleware)
 
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 
