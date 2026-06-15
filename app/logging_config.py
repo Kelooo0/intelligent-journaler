@@ -17,4 +17,5 @@ def setup_logging():
         level=settings.LOG_LEVEL,
         filter=lambda record: record["extra"].setdefault("request_id", "GLOBAL"),
     )
+    logger.debug(f"Initialized logging engine with level: {settings.LOG_LEVEL}")
     return logger

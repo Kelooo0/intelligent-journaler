@@ -1,7 +1,7 @@
 import time
 import uuid
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from loguru import logger
 
 app = FastAPI()
@@ -26,5 +26,10 @@ async def log_request_middleware(request: Request, call_next):
 
             response.headers["X-Request-ID"] = request_id
             return response
+        except HTTPException:
+            raise
         except Exception:
-            logger.exception("Request failed")
+            logger.exception(
+                f"Request failed while {request.method} {request.url.path}"
+            )
+            raise

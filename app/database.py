@@ -1,7 +1,11 @@
+from fastapi import HTTPException
+from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
 from app.config import settings
+
+logger.info("Initializing database engine")
 
 engine = create_async_engine(settings.DATABASE_URL)
 
@@ -15,5 +19,14 @@ class Base(DeclarativeBase):
 
 
 async def get_db():
-    async with SessionLocal() as db:
-        yield db
+    logger.debug("Opening a new database session")
+    try:
+        async with SessionLocal() as db:
+            yield db
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Database session error occured")
+        raise
+    finally:
+        logger.debug("Database session closed")

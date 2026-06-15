@@ -1,6 +1,7 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,12 +24,17 @@ async def validate_entry(
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ) -> EntryModel:
+    logger.debug("Performing entry validation")
     entry = await db.scalar(select(EntryModel).where(EntryModel.id == id))
     if entry is None:
+        logger.debug(f"Entry id: {id} doesn't exist")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Entry not found"
         )
     if entry.user_id != current_user.id:
+        logger.debug(
+            f"User id: {current_user.id} doesn't have access for entry id: {id}"
+        )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Entry not found",
@@ -54,6 +60,7 @@ async def get_entries(
 
 @router.get("/{id}", response_model=Entry)
 async def get_entry(entry: EntryModel = Depends(validate_entry)) -> Entry:
+    logger.info(f"Returning entry data for entry id: {entry.id}")
     return entry
 
 
