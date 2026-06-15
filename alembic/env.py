@@ -5,9 +5,9 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from app import models
-from app.database import Base
-from app.config import settings
+from app.models import models
+from app.core.database import Base
+from app.core.config import settings
 
 from alembic import context
 

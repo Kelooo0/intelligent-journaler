@@ -8,10 +8,10 @@ from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import settings
-from app.database import get_db
-from app.models import UserModel
-from app.schemas import TokenData, UserCreate
+from app.core.config import settings
+from app.core.database import get_db
+from app.models.models import UserModel
+from app.schemas.schemas import TokenData, UserCreate
 
 ALGORITHM = settings.ALGORITHM
 SECRET_KEY = settings.SECRET_KEY
@@ -22,7 +22,7 @@ class AuthService:
     @staticmethod
     async def check_user_exists(email: str, db: AsyncSession) -> None:
         logger.debug("Checking if user already exists")
-        from app.models import UserModel
+        from app.models.models import UserModel
 
         existing_user = await db.scalar(
             select(UserModel).where(UserModel.email == email)

@@ -5,8 +5,8 @@ from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import EntryModel, TagModel, UserModel
-from app.schemas import EntryCreate, EntryUpdate
+from app.models.models import EntryModel, TagModel, UserModel
+from app.schemas.schemas import EntryCreate, EntryUpdate
 from app.services.ai_service import ai_service
 from app.services.tags_service import get_tags_str, process_tags
 

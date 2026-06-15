@@ -3,8 +3,8 @@ from google import genai
 from google.genai import types
 from loguru import logger
 
-from app.config import settings
-from app.schemas import EntryAnalysis
+from app.core.config import settings
+from app.schemas.schemas import EntryAnalysis
 
 
 class AIService:

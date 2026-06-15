@@ -2,7 +2,7 @@ from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import TagModel
+from app.models.models import TagModel
 
 
 async def get_tags_str(db: AsyncSession, user_id: int) -> str:

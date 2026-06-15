@@ -7,8 +7,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
-from app.config import settings
-from app.database import Base, get_db
+from app.core.config import settings
+from app.core.database import Base, get_db
 from app.main import app
 
 engine = create_async_engine(
@@ -65,7 +65,7 @@ async def authorized_client(client, db_session):
 
 @pytest_asyncio.fixture
 async def test_user(authorized_client, db_session):
-    from app.models import UserModel
+    from app.models.models import UserModel
 
     return await db_session.scalar(
         select(UserModel).where(UserModel.email == "user@example.com")
@@ -87,7 +87,7 @@ def mock_ai(mocker):
 
 @pytest_asyncio.fixture
 async def test_entry(db_session, test_user, mock_ai):
-    from app.schemas import EntryCreate
+    from app.schemas.schemas import EntryCreate
     from app.services.entries_service import create_entry_service
 
     entry_in = EntryCreate(

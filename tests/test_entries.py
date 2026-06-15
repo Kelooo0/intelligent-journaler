@@ -28,7 +28,8 @@ async def test_create_entry(authorized_client, mock_ai):
     response = await authorized_client.post(
         "/entries",
         json={
-            "content": "Today was a very good day, I woke up, went for a walk, watched my favorite series all day"
+            "content": "Today was a very good day, I woke up, went for a walk,"
+            " watched my favorite series all day"
         },
     )
 
@@ -72,7 +73,7 @@ async def test_delete_entry(authorized_client, test_entry, db_session):
     response = await authorized_client.delete(f"/entries/{test_entry.id}")
 
     assert response.status_code == 204
-    from app.models import EntryModel
+    from app.models.models import EntryModel
 
     entry = await db_session.scalar(
         select(EntryModel).where(EntryModel.id == test_entry.id)

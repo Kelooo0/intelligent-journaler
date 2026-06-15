@@ -5,9 +5,9 @@ from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_db
-from app.models import EntryModel, UserModel
-from app.schemas import Entry, EntryCreate, EntryUpdate
+from app.core.database import get_db
+from app.models.models import EntryModel, UserModel
+from app.schemas.schemas import Entry, EntryCreate, EntryUpdate
 from app.services.auth_service import get_current_user
 from app.services.entries_service import (
     create_entry_service,
