@@ -28,8 +28,10 @@ class AIService:
                 Respond in the same language as the Content.
 
                 RULES FOR TAGS:
-                1. Every tag must be a noun in the singular form (base form, e.g., "training", "work", "sadness").
-                2. Never use plurals, verbs, or inflected forms (e.g., DO NOT use "trainings", "working", "sadly").
+                1. Every tag must be a noun in the singular form
+                (base form, e.g., "training", "work", "sadness").
+                2. Never use plurals, verbs, or inflected forms
+                (e.g., DO NOT use "trainings", "working", "sadly").
                 3. Write all tags in lowercase.
             """
             logger.debug("Fetching response from ai model")
@@ -45,12 +47,12 @@ class AIService:
             data = EntryAnalysis.model_validate_json(response.text)
             logger.debug("Returning a validated analysis data")
             return data
-        except Exception:
+        except Exception as e:
             logger.exception("An AIService error occured")
             raise HTTPException(
                 status_code=status.HTTP_502_BAD_GATEWAY,
                 detail="An AIService error occured",
-            )
+            ) from e
 
 
 ai_service = AIService()

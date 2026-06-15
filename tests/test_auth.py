@@ -8,7 +8,8 @@ async def test_register_client(client, db_session):
     )
 
     assert response.status_code == 201
-    assert "id" and "email" in response.json()
+    assert "id" in response.json()
+    assert "email" in response.json()
     assert response.json()["email"] == "user@example.com"
 
 

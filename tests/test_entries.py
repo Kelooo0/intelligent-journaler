@@ -53,7 +53,8 @@ async def test_update_entry(test_entry, authorized_client, mock_ai):
     response = await authorized_client.patch(
         f"/entries/{test_entry.id}",
         json={
-            "content": "Today was a very bad day, I woke up, went for a walk when it started to rain"
+            "content": "Today was a very bad day, I woke up,"
+            " went for a walk when it started to rain"
         },
     )
 

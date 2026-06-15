@@ -109,5 +109,7 @@ async def get_current_user(
     if user is None:
         logger.error("User with email fetched from JWT token not found")
         raise credentials_exception
-    logger.debug(f"Succesfully fetched current user's database model, user id: {user.id}")
+    logger.debug(
+        f"Succesfully fetched current user's database model, user id: {user.id}"
+    )
     return user

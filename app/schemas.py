@@ -81,5 +81,8 @@ class EntryAnalysis(BaseModel):
     )
     tags: list[str] = Field(
         default_factory=list,
-        description="Generate up to 5 relevant tags. Use matching tags from 'Available existing tags' if they fit; otherwise, create new ones in the same language as the content (nominative case)",
+        description="Generate up to 5 relevant tags."
+        " Use matching tags from 'Available existing tags' if they fit;"
+        " otherwise, create new ones in the same language "
+        "as the content (nominative case)",
     )

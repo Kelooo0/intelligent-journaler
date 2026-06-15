@@ -91,7 +91,8 @@ async def test_entry(db_session, test_user, mock_ai):
     from app.services.entries_service import create_entry_service
 
     entry_in = EntryCreate(
-        content="Today was a very good day, I woke up, went for a walk, watched my favorite series all day"
+        content="Today was a very good day, I woke up, went for a walk,"
+        " watched my favorite series all day"
     )
 
     return await create_entry_service(entry_in, db_session, test_user)
