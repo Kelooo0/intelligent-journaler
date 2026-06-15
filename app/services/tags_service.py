@@ -6,8 +6,10 @@ from app.models.models import TagModel
 
 
 async def get_tags_str(db: AsyncSession, user_id: int) -> str:
-    logger.debug("Fetching existing tags from the database")
-    existing_tags = (await db.scalars(select(TagModel))).all()
+    logger.debug(f"Fetching existing tags from the database for user id: {user_id}")
+    existing_tags = (
+        await db.scalars(select(TagModel).where(TagModel.user_id == user_id))
+    ).all()
     tags_list = [t.name for t in existing_tags]
     logger.debug(f"{len(tags_list)} tags have been found")
     return ", ".join(tags_list) if tags_list else "None"
