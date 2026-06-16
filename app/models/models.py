@@ -1,3 +1,4 @@
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -31,6 +32,7 @@ class EntryModel(Base):
     mood = Column(String, nullable=True)
     sentiment_score = Column(Float, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
+    embedding = Column(Vector(768), nullable=True)
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
