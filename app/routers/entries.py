@@ -1,14 +1,12 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from loguru import logger
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_db
+from app.core.dependencies import get_current_user, get_db, validate_entry
 from app.models.models import EntryModel, UserModel
 from app.schemas.schemas import Entry, EntryCreate, EntryUpdate
-from app.services.auth_service import get_current_user
 from app.services.entries_service import (
     create_entry_service,
     delete_entry_service,
@@ -17,29 +15,6 @@ from app.services.entries_service import (
 )
 
 router = APIRouter()
-
-
-async def validate_entry(
-    id: int,
-    db: AsyncSession = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
-) -> EntryModel:
-    logger.debug("Performing entry validation")
-    entry = await db.scalar(select(EntryModel).where(EntryModel.id == id))
-    if entry is None:
-        logger.debug(f"Entry id: {id} doesn't exist")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Entry not found"
-        )
-    if entry.user_id != current_user.id:
-        logger.debug(
-            f"User id: {current_user.id} doesn't have access for entry id: {id}"
-        )
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Entry not found",
-        )
-    return entry
 
 
 @router.get("", response_model=list[Entry])

@@ -2,20 +2,14 @@ from datetime import UTC, datetime, timedelta
 
 import bcrypt
 import jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException, status
 from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.database import get_db
 from app.models.models import UserModel
-from app.schemas.schemas import TokenData, UserCreate
-
-ALGORITHM = settings.ALGORITHM
-SECRET_KEY = settings.SECRET_KEY
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+from app.schemas.schemas import UserCreate
 
 
 class AuthService:
@@ -77,39 +71,11 @@ class AuthService:
         to_encode = data.copy()
         expire = datetime.now(UTC) + timedelta(minutes=30)
         to_encode.update({"exp": expire})
-        access_token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        access_token = jwt.encode(
+            to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+        )
         logger.info("Succesfully created user access token")
         return access_token
 
 
 auth_service = AuthService()
-
-
-async def get_current_user(
-    db: AsyncSession = Depends(get_db), token: str = Depends(oauth2_scheme)
-) -> UserModel:
-    logger.debug("Fetching current user's database model")
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Credentials error",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        logger.debug("Decoding JWT token")
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            logger.error("No email found in user's payload")
-            raise credentials_exception
-        token_data = TokenData(email=email)
-    except jwt.PyJWTError:
-        logger.error("A PyJWT error occured")
-        raise credentials_exception
-    user = await db.scalar(select(UserModel).where(UserModel.email == token_data.email))
-    if user is None:
-        logger.error("User with email fetched from JWT token not found")
-        raise credentials_exception
-    logger.debug(
-        f"Succesfully fetched current user's database model, user id: {user.id}"
-    )
-    return user
