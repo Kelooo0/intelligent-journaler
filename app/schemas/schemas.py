@@ -86,3 +86,7 @@ class EntryAnalysis(BaseModel):
         " otherwise, create new ones in the same language "
         "as the content (nominative case)",
     )
+
+
+class AssistentSearch(BaseModel):
+    query: str = Field(..., min_length=3, max_length=500)

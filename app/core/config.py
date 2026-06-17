@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
-    API_KEY: str
+    GEMINI_API_KEY: str
     TEST_DATABASE_URL: str = "sqlite+aiosqlite:///:memory:"
     LOG_LEVEL: str = "INFO"
 

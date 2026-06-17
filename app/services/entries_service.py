@@ -68,12 +68,14 @@ async def create_entry_service(
     logger.info(f"Creating a new entry for user id: {current_user.id}")
     tags = await get_tags_str(db, current_user.id)
     analysis = await ai_service.analyze_entry(entry_data.content, tags)
+    embedding = await ai_service.get_embedding(entry_data.content)
     new_entry = EntryModel(
         content=entry_data.content,
         user_id=current_user.id,
         summary=analysis.summary,
         mood=analysis.mood,
         sentiment_score=analysis.sentiment_score,
+        embedding=embedding,
     )
     logger.debug("Created a new entry object")
     db_tags = await process_tags(analysis.tags, db, current_user.id)
@@ -101,10 +103,12 @@ async def update_entry_service(
         logger.debug(f"Generating a new analysis for entry id: {entry.id} ")
         tags = await get_tags_str(db, entry.user_id)
         analysis = await ai_service.analyze_entry(entry.content, tags)
+        embedding = await ai_service.get_embedding(entry.content)
         logger.debug("Updating ai analysis data")
         entry.summary = analysis.summary
         entry.mood = analysis.mood
         entry.sentiment_score = analysis.sentiment_score
+        entry.embedding = embedding
         db_tags = await process_tags(analysis.tags, db, entry.user_id)
         entry.tags = db_tags
         logger.debug("Assigned updated tags")

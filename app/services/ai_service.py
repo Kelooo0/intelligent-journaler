@@ -1,17 +1,16 @@
-from fastapi import HTTPException, status
 from google import genai
 from google.genai import types
 from loguru import logger
 
-from app.core.config import settings
 from app.schemas.schemas import EntryAnalysis
 
 
 class AIService:
     def __init__(self) -> None:
         logger.debug("Initializing genai client")
-        self.client = genai.Client(api_key=settings.API_KEY)
+        self.client = genai.Client().aio
         self.model_id = "gemini-2.5-flash"
+        self.embedding_model = "gemini-embedding-001"
 
     async def analyze_entry(self, content: str, tags: str) -> EntryAnalysis:
         logger.info("Analyzing entry content")
@@ -35,7 +34,7 @@ class AIService:
                 3. Write all tags in lowercase.
             """
             logger.debug("Fetching response from ai model")
-            response = await self.client.aio.models.generate_content(
+            response = await self.client.models.generate_content(
                 model=self.model_id,
                 contents=prompt,
                 config=types.GenerateContentConfig(
@@ -47,12 +46,22 @@ class AIService:
             data = EntryAnalysis.model_validate_json(response.text)
             logger.debug("Returning a validated analysis data")
             return data
-        except Exception as e:
+        except Exception:
             logger.exception("An AIService error occured")
-            raise HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY,
-                detail="An AIService error occured",
-            ) from e
+            return EntryAnalysis()
+
+    async def get_embedding(self, content: str) -> list[float] | None:
+        logger.debug("Generating an embedding for provided content")
+        try:
+            response = await self.client.models.embed_content(
+                model=self.embedding_model,
+                contents=content,
+                config=types.EmbedContentConfig(output_dimensionality=768),
+            )
+            return response.embeddings[0].values
+        except Exception:
+            logger.exception("An error occured while generating an embedding")
+            return None
 
 
 ai_service = AIService()

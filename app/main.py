@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.core.logging_config import setup_logging
 from app.core.middleware import log_request_middleware
-from app.routers import auth, entries
+from app.routers import auth, entries, assistant
 
 setup_logging()
 
@@ -13,6 +13,8 @@ app.middleware("http")(log_request_middleware)
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 
 app.include_router(entries.router, prefix="/entries", tags=["Entries"])
+
+app.include_router(assistant.router, prefix="/assistant", tags=["Assistant"])
 
 
 @app.get("/", tags=["Health Check"])
