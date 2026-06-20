@@ -7,7 +7,7 @@ from app.models.models import EntryModel, UserModel
 from app.services.ai_service import ai_service
 
 
-async def find_similar_service(
+async def find_matching_service(
     query: str, current_user: UserModel, db: AsyncSession
 ) -> list[EntryModel]:
     logger.info("Searching for matching entries")
@@ -30,7 +30,7 @@ async def find_similar_service(
         select(EntryModel)
         .where(EntryModel.user_id == current_user.id)
         .order_by(EntryModel.embedding.cosine_distance(query_embedding))
-        .limit(5)
+        .limit(3)
     )
     result = await db.execute(database_query)
     logger.info("Returning matching entries")

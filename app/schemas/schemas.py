@@ -27,15 +27,14 @@ class TokenData(BaseModel):
 
 
 class EntryBase(BaseModel):
-    content: str = Field(..., min_length=30)
+    content: str = Field(..., min_length=30, max_length=10000)
 
-    @field_validator("content")
+    @field_validator("content", mode="before")
     @classmethod
-    def validate_content(cls, v: str | None) -> str | None:
-        if v is not None:
-            v = v.strip()
-            if not v:
-                raise ValueError("Invalid content")
+    def validate_content(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("Content can not be empty or just whitespaces")
         return v
 
 
@@ -86,7 +85,3 @@ class EntryAnalysis(BaseModel):
         " otherwise, create new ones in the same language "
         "as the content (nominative case)",
     )
-
-
-class AssistentSearch(BaseModel):
-    query: str = Field(..., min_length=3, max_length=500)
