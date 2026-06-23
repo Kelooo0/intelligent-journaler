@@ -8,7 +8,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str = Field(..., min_length=8)
+    password: str = Field(min_length=8)
 
 
 class User(UserBase):
@@ -27,7 +27,7 @@ class TokenData(BaseModel):
 
 
 class EntryBase(BaseModel):
-    content: str = Field(..., min_length=30, max_length=10000)
+    content: str = Field(min_length=30, max_length=10000)
 
     @field_validator("content", mode="before")
     @classmethod
@@ -43,7 +43,7 @@ class EntryCreate(EntryBase):
 
 
 class EntryUpdate(EntryBase):
-    content: str | None = Field(None, min_length=30)
+    content: str | None = Field(default=None, min_length=30)
 
 
 class Tag(BaseModel):
@@ -84,4 +84,27 @@ class EntryAnalysis(BaseModel):
         " Use matching tags from 'Available existing tags' if they fit;"
         " otherwise, create new ones in the same language "
         "as the content (nominative case)",
+    )
+
+
+class QuerySchema(BaseModel):
+    content: str = Field(min_length=3, max_length=500)
+
+    @field_validator("content", mode="before")
+    @classmethod
+    def validate_query(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("User query can not be empty or just whitespaces")
+        return v
+
+
+class DatesSchema(BaseModel):
+    start_date: datetime | None = Field(
+        default=None,
+        description="ISO date YYYY-MM-DD if user specified a time start range",
+    )
+    end_date: datetime | None = Field(
+        default=None,
+        description="ISO date YYYY-MM-DD if user specified a time end range",
     )
