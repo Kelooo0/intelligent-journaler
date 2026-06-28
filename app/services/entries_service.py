@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.models import EntryModel, TagModel, UserModel
 from app.schemas.schemas import EntryCreate, EntryUpdate
-from app.services.ai_service import ai_service
+from app.services.ai.base import AIService
 from app.services.tags_service import get_tags_str, process_tags
 
 
@@ -63,12 +63,12 @@ async def get_entries_service(
 
 
 async def create_entry_service(
-    entry_data: EntryCreate, db: AsyncSession, current_user: UserModel
+    entry_data: EntryCreate, db: AsyncSession, current_user: UserModel, ai: AIService
 ) -> EntryModel:
     logger.info(f"Creating a new entry for user id: {current_user.id}")
     tags = await get_tags_str(db, current_user.id)
-    analysis = await ai_service.analyze_entry(entry_data.content, tags)
-    embedding = await ai_service.get_embedding(entry_data.content)
+    analysis = await ai.analyze_entry(entry_data.content, tags)
+    embedding = await ai.get_embedding(entry_data.content)
     new_entry = EntryModel(
         content=entry_data.content,
         user_id=current_user.id,
@@ -89,7 +89,7 @@ async def create_entry_service(
 
 
 async def update_entry_service(
-    update_data: EntryUpdate, entry: EntryModel, db: AsyncSession
+    update_data: EntryUpdate, entry: EntryModel, db: AsyncSession, ai: AIService
 ) -> EntryModel:
     logger.debug(f"Updating entry id: {entry.id}")
     update_dict = update_data.model_dump(exclude_unset=True)
@@ -102,8 +102,8 @@ async def update_entry_service(
     if content_changed:
         logger.debug(f"Generating a new analysis for entry id: {entry.id} ")
         tags = await get_tags_str(db, entry.user_id)
-        analysis = await ai_service.analyze_entry(entry.content, tags)
-        embedding = await ai_service.get_embedding(entry.content)
+        analysis = await ai.analyze_entry(entry.content, tags)
+        embedding = await ai.get_embedding(entry.content)
         logger.debug("Updating ai analysis data")
         entry.summary = analysis.summary
         entry.mood = analysis.mood

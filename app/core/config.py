@@ -9,6 +9,12 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str
     TEST_DATABASE_URL: str = "sqlite+aiosqlite:///:memory:"
     LOG_LEVEL: str = "INFO"
+    LLM_PROVIDER: str = "gemini"
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_MODEL_LITE: str = "gemini-2.5-flash-lite"
+    GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-001"
+    OPENAI_MODEL: str = "gpt-4o-mini"
+    OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
 
     DB_USER: str
     DB_PASS: str

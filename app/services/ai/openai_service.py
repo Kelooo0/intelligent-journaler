@@ -1,54 +1,55 @@
 from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
-from google import genai
-from google.genai import types
 from loguru import logger
+from openai import AsyncOpenAI
 
+from app.core.config import settings
 from app.models.models import EntryModel
 from app.schemas.schemas import DatesSchema, EntryAnalysis
+from app.services.ai.base import AIService
 
 
-class AIService:
+class OpenAIService(AIService):
     def __init__(self) -> None:
-        logger.debug("Initializing genai client")
-        self.client = genai.Client().aio
-        self.model = "gemini-2.5-flash"
-        self.model_lite = "gemini-2.5-flash-lite"
-        self.embedding_model = "gemini-embedding-001"
+        logger.debug("Initializing OpenAI client")
+        self.client = AsyncOpenAI()
+        self.model = settings.OPENAI_MODEL
+        self.embedding_model = settings.OPENAI_EMBEDDING_MODEL
 
     async def analyze_entry(self, content: str, tags: str) -> EntryAnalysis:
         logger.info("Analyzing entry content")
-        logger.debug("Setting up prompt for analyzing entry content")
-        prompt = f"""
+        logger.debug("Setting up prompts for analyzing entry content")
+        user_prompt = f"""
             Content: {content}
             Available existing tags: {tags}
+        """
+        system_prompt = """
+        TASK:
+        Analyze the journal entry provided in 'Content'.
 
-            TASK:
-            Analyze the journal entry provided in 'Content'.
+        LANGUAGE:
+        Respond in the same language as the Content.
 
-            LANGUAGE:
-            Respond in the same language as the Content.
-
-            RULES FOR TAGS:
-            1. Every tag must be a noun in the singular form
-            (base form, e.g., "training", "work", "sadness").
-            2. Never use plurals, verbs, or inflected forms
-            (e.g., DO NOT use "trainings", "working", "sadly").
-            3. Write all tags in lowercase.
+        RULES FOR TAGS:
+        1. Every tag must be a noun in the singular form
+        (base form, e.g., "training", "work", "sadness").
+        2. Never use plurals, verbs, or inflected forms
+        (e.g., DO NOT use "trainings", "working", "sadly").
+        3. Write all tags in lowercase.
         """
         try:
             logger.debug("Fetching response from LLM model")
-            response = await self.client.models.generate_content(
+            response = await self.client.beta.chat.completions.parse(
                 model=self.model,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    response_schema=EntryAnalysis,
-                    temperature=0.1,
-                ),
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                response_format=EntryAnalysis,
+                temperature=0.1,
             )
-            data = EntryAnalysis.model_validate_json(response.text)
+            data = response.choices[0].message.parsed
             logger.info("Returning a validated analysis data")
             return data
         except Exception:
@@ -58,37 +59,47 @@ class AIService:
     async def get_embedding(self, content: str) -> list[float] | None:
         try:
             logger.debug("Generating an embedding for provided content")
-            response = await self.client.models.embed_content(
+            response = await self.client.embeddings.create(
                 model=self.embedding_model,
-                contents=content,
-                config=types.EmbedContentConfig(output_dimensionality=768),
+                input=content,
+                dimensions=768,
             )
             logger.info("Returning generated embedding")
-            return response.embeddings[0].values
+            return response.data[0].embedding
         except Exception:
             logger.exception("An error occured while generating an embedding")
 
     async def get_dates(self, query_content: str) -> DatesSchema:
         logger.debug("Fetching dates from provided query")
         current_date = datetime.now(UTC).strftime("%Y-%m-%d, %A")
-        logger.debug("Setting up prompt for fetching dates")
-        prompt = f"""
+        logger.debug("Setting up prompts for fetching dates")
+        user_prompt = f"""
         Today is {current_date}.
-        Extract date ranges from the user's query according to the schema.
         User: {query_content}
         """
+        system_prompt = (
+            "Extract date ranges from the user's query according to the schema."
+        )
         try:
             logger.debug("Fetching response from LLM model")
-            response = await self.client.models.generate_content(
-                model=self.model_lite,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    response_schema=DatesSchema,
-                    temperature=0.0,
-                ),
+            response = await self.client.beta.chat.completions.parse(
+                model=self.model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": system_prompt,
+                    },
+                    {"role": "user", "content": user_prompt},
+                ],
+                response_format=DatesSchema,
+                temperature=0.0,
             )
-            data = DatesSchema.model_validate_json(response.text)
+            data = response.choices[0].message.parsed
+            logger.debug(
+                "Dates returned from AI: SD: {}, ED: {}",
+                data.start_date or "None",
+                data.end_date or "None",
+            )
             logger.info("Returning validated dates")
             return data
         except Exception:
@@ -98,7 +109,7 @@ class AIService:
     async def transform_query(self, query_content: str) -> str:
         logger.debug("Transforming user query into a LLM-friendly form")
         logger.debug("Setting up prompt for transforming user query")
-        prompt = f"""
+        system_prompt = """
         You are a query optimization module in a smart journal application.
         Your task is to transform a chaotic, colloquial user question into a dense keyword
         phrase optimized for semantic (vector) search in the database.
@@ -120,20 +131,25 @@ class AIService:
 
         User: "How did I feel when my dog passed away?"
         Phrase: "dog death sadness grief loss of pet emotions"
-
-        User: "{query_content}"
         """
         try:
             logger.debug("Fetching response from LLM model")
-            response = await self.client.models.generate_content(
-                model=self.model_lite,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.0, max_output_tokens=60
-                ),
+            response = await self.client.responses.create(
+                model=self.model,
+                input=[
+                    {
+                        "role": "system",
+                        "content": system_prompt,
+                    },
+                    {"role": "user", "content": query_content},
+                ],
+                temperature=0.0,
+                max_output_tokens=60,
             )
+            text = response.output_text
+            logger.debug(f"Transformed user query: {text}")
             logger.info("Returning transformed user query")
-            return response.text
+            return text
         except Exception:
             logger.exception("An error occured while transforming user query")
             return query_content
@@ -154,8 +170,16 @@ class AIService:
             context += f"ENTRY {i + 1}:\n"
             context += f"- Content: {entry['content']}\n"
             context += f"- Created at: {entry['created_at']}\n"
-        logger.debug("Setting up prompt for assistant response")
-        prompt = f"""
+        logger.debug("Setting up prompts for assistant response")
+        user_prompt = f"""
+        <journal_context>
+        "{context}"
+        </journal_context>
+
+        USER QUERY:
+        "{clean_query}"
+        """
+        system_prompt = """
         You are an advanced, empathetic, and secure AI Diary Assistant.
         Your purpose is to help the user analyze their personal journal entries,
         discover emotional patterns, and recall past events.
@@ -178,34 +202,27 @@ class AIService:
         - Precision: Be concise and factual. Reference specific dates or timeframes provided in the context
         (e.g., "On March 15, you mentioned that..."). Do not over-analyze or preach.
         </STYLE_AND_TONE>
-
-        <journal_context>
-        "{context}"
-        </journal_context>
-
-        USER QUERY:
-        "{clean_query}"
         """
         try:
             logger.debug("Fetching response from LLM model")
-            response = await self.client.models.generate_content(
+            response = await self.client.responses.create(
                 model=self.model,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.2,
-                    max_output_tokens=800,
-                    top_p=0.95,
-                    top_k=40,
-                ),
+                input=[
+                    {
+                        "role": "system",
+                        "content": system_prompt,
+                    },
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.2,
+                max_output_tokens=800,
+                top_p=0.95,
             )
             logger.info("Returning response from AI assistant")
-            return {"answer": response.text}
+            return {"answer": response.output_text}
         except Exception as e:
             logger.exception("An error occured while generating AI response")
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="An error occured while generating AI response",
             ) from e
-
-
-ai_service = AIService()

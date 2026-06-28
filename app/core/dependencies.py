@@ -9,6 +9,8 @@ from app.core.config import settings
 from app.core.database import SessionLocal
 from app.models.models import EntryModel, UserModel
 from app.schemas.schemas import TokenData
+from app.services.ai.base import AIService
+from app.services.ai.factory import ai_service
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
@@ -80,3 +82,7 @@ async def validate_entry(
             detail="Entry not found",
         )
     return entry
+
+
+def get_ai() -> AIService:
+    return ai_service()

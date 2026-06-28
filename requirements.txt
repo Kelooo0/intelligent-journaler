@@ -16,3 +16,4 @@ bcrypt==5.0.0
 ruff==0.15.16
 loguru==0.7.3
 pgvector==0.4.2
+openai==2.44.0

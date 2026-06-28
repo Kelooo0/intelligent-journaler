@@ -4,9 +4,10 @@ from fastapi import APIRouter, Depends, Query, status
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.dependencies import get_current_user, get_db, validate_entry
+from app.core.dependencies import get_ai, get_current_user, get_db, validate_entry
 from app.models.models import EntryModel, UserModel
 from app.schemas.schemas import Entry, EntryCreate, EntryUpdate
+from app.services.ai.base import AIService
 from app.services.entries_service import (
     create_entry_service,
     delete_entry_service,
@@ -44,8 +45,9 @@ async def create_entry(
     entry_data: EntryCreate,
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
+    ai: AIService = Depends(get_ai),
 ) -> Entry:
-    return await create_entry_service(entry_data, db, current_user)
+    return await create_entry_service(entry_data, db, current_user, ai)
 
 
 @router.patch("/{id}", response_model=Entry)
@@ -53,8 +55,9 @@ async def update_entry(
     update_data: EntryUpdate,
     entry: EntryModel = Depends(validate_entry),
     db: AsyncSession = Depends(get_db),
+    ai: AIService = Depends(get_ai),
 ) -> Entry:
-    return await update_entry_service(update_data, entry, db)
+    return await update_entry_service(update_data, entry, db, ai)
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)

@@ -7,15 +7,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.models import EntryModel, UserModel
 from app.schemas.schemas import DatesSchema
-from app.services.ai_service import ai_service
+from app.services.ai.base import AIService
 
 
 async def find_matching_service(
-    query_content: str, dates: DatesSchema, current_user: UserModel, db: AsyncSession
+    query_content: str,
+    dates: DatesSchema,
+    current_user: UserModel,
+    db: AsyncSession,
+    ai: AIService,
 ) -> list[EntryModel]:
     logger.debug("Searching for matching entries")
-    logger.debug("Generating an embeddin    g for provided query")
-    query_embedding = await ai_service.get_embedding(query_content)
+    logger.debug("Generating an embedding for provided query")
+    query_embedding = await ai.get_embedding(query_content)
     if query_embedding is None:
         logger.error("An error occured while generating query embedding")
         raise HTTPException(
