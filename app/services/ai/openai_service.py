@@ -5,8 +5,7 @@ from loguru import logger
 from openai import AsyncOpenAI
 
 from app.core.config import settings
-from app.models.models import EntryModel
-from app.schemas.schemas import DatesSchema, EntryAnalysis
+from app.schemas.schemas import DatesSchema, EntryAnalysis, ResponseSchema, VectorResult
 from app.services.ai.base import AIService
 
 
@@ -155,21 +154,19 @@ class OpenAIService(AIService):
             return query_content
 
     async def assistant_response(
-        self, query_content: str, matching_entries: list[EntryModel]
-    ) -> dict[str, str]:
+        self, query_content: str, vector_result: list[VectorResult]
+    ) -> ResponseSchema:
         logger.debug("Generating proper AI response")
         clean_query = await self.transform_query(query_content)
-        logger.debug("Formatting matching entries")
-        formatted_entries = [
-            {"content": e.content, "created_at": e.created_at.strftime("%Y-%m-%d")}
-            for e in matching_entries
-        ]
-        logger.debug("Preparing context from formatted entries")
+        logger.debug("Preparing context from matching entries")
         context = ""
-        for i, entry in enumerate(formatted_entries):
+        for i, result in enumerate(vector_result):
             context += f"ENTRY {i + 1}:\n"
-            context += f"- Content: {entry['content']}\n"
-            context += f"- Created at: {entry['created_at']}\n"
+            context += f"- Entry ID: {result.entry.id}\n"
+            context += f"- Content: {result.entry.content}\n"
+            context += f"- Mood: {result.entry.mood}\n"
+            context += f"- Created at: {result.entry.created_at}\n"
+            context += f"- Relevance score: {result.relevance_score}\n"
         logger.debug("Setting up prompts for assistant response")
         user_prompt = f"""
         <journal_context>
@@ -188,10 +185,10 @@ class OpenAIService(AIService):
         - You are provided with relevant journal entries matching the user's request
         inside the <journal_context> tag.
         - Base your response ONLY and EXCLUSIVELY on the provided journal entries.
-        - If the provided entries do not contain enough information to answer the question,
-        or if the context is empty, respond exactly with: "I could not find information in your journal that
-        would allow me to answer this question." (or the equivalent in the user's language).
         - Never hallucinate or use external world knowledge about the user.
+        When filling the `used_entries` list:
+            - Copy the `id` and `relevance_score` values exactly from the corresponding journal entries.
+            - Do not generate, modify, or infer these values.
         </CONTEXT_RULES>
 
         <STYLE_AND_TONE>
@@ -205,9 +202,9 @@ class OpenAIService(AIService):
         """
         try:
             logger.debug("Fetching response from LLM model")
-            response = await self.client.responses.create(
+            response = await self.client.beta.chat.completions.parse(
                 model=self.model,
-                input=[
+                messages=[
                     {
                         "role": "system",
                         "content": system_prompt,
@@ -215,11 +212,13 @@ class OpenAIService(AIService):
                     {"role": "user", "content": user_prompt},
                 ],
                 temperature=0.2,
-                max_output_tokens=800,
+                max_completion_tokens=800,
                 top_p=0.95,
+                response_format=ResponseSchema,
             )
+            data = response.choices[0].message.parsed
             logger.info("Returning response from AI assistant")
-            return {"answer": response.output_text}
+            return data
         except Exception as e:
             logger.exception("An error occured while generating AI response")
             raise HTTPException(

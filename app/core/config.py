@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-001"
     OPENAI_MODEL: str = "gpt-4o-mini"
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
+    VECTOR_TOP_K_RETRIEVAL: int = 10
+    VECTOR_TOP_K_FINAL: int = 3
+    VECTOR_HIGH_TRESHOLD: float = 0.80
+    VECTOR_MEDIUM_TRESHOLD: float = 0.65
 
     DB_USER: str
     DB_PASS: str

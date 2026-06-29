@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.models.models import EntryModel
-from app.schemas.schemas import DatesSchema, EntryAnalysis
+from app.schemas.schemas import DatesSchema, EntryAnalysis, ResponseSchema, VectorResult
 
 
 class AIService(ABC):
@@ -23,6 +22,6 @@ class AIService(ABC):
 
     @abstractmethod
     async def assistant_response(
-        self, query_content: str, matching_entries: list[EntryModel]
-    ) -> dict[str, str]:
+        self, query_content: str, vector_result: list[VectorResult]
+    ) -> ResponseSchema:
         pass

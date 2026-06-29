@@ -108,3 +108,38 @@ class DatesSchema(BaseModel):
         default=None,
         description="ISO date YYYY-MM-DD if user specified a time end range",
     )
+
+
+class UsedEntry(BaseModel):
+    id: int = Field(
+        description="Unique identifier of the journal entry from the database."
+    )
+    relevance_score: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Vector similarity score indicating how relevant this entry is"
+        " to the user query. Higher means more relevant.",
+    )
+
+
+class ResponseSchema(BaseModel):
+    answer: str = Field(
+        default="I couldn't find any relevant journal entries that would fit your query.",
+        description="Final response to the user query. Must be a natural language"
+        " answer based only on provided journal entries.",
+    )
+    used_entries: list[UsedEntry] = Field(
+        default_factory=list,
+        description="List of journal entries used to generate the answer, ranked"
+        " by relevance. Each entry includes its ID and similarity score from vector search.",
+    )
+    intent: str = Field(
+        default="memory_recall",
+        description="Detected user intent. Examples: memory_recall,"
+        " emotional_reflection, advice, general_chat.",
+    )
+
+
+class VectorResult(BaseModel):
+    entry: Entry
+    relevance_score: float
