@@ -61,7 +61,6 @@ class OpenAIService(AIService):
             response = await self.client.embeddings.create(
                 model=self.embedding_model,
                 input=content,
-                dimensions=768,
             )
             logger.info("Returning generated embedding")
             return response.data[0].embedding
