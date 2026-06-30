@@ -75,9 +75,51 @@ class OpenAIService(AIService):
         Today is {current_date}.
         User: {query_content}
         """
-        system_prompt = (
-            "Extract date ranges from the user's query according to the schema."
-        )
+        system_prompt = """
+        TASK:
+        Extract a date range ONLY if the user is explicitly filtering journal entries by time.
+
+        TIME FILTERING means queries like:
+        - "entries from..."
+        - "what did I write in..."
+        - "show me entries during..."
+        - "between X and Y"
+
+        RULES:
+        - Extract dates ONLY for search filtering.
+        - NEVER extract dates from descriptions of events or memories inside journal entries.
+        - Do NOT infer time periods from topics or semantic meaning.
+
+        Treat these as NON-TIME-FILTER context when part of a memory:
+        - seasons (summer, winter, spring, autumn)
+        - holidays / vacation
+        - events
+        - activities
+        - emotions
+        - people
+        - phrases like "next week", "last week"
+
+        If the time expression could belong to either interpretation → DO NOT extract dates.
+
+        Examples:
+
+        User: "Show me entries from last summer."
+        → Extract date range.
+
+        User: "What did I write last week?"
+        → Extract date range.
+
+        User: "Remind me of an entry where I mentioned summer break."
+        → Do NOT extract dates.
+
+        User: "When did I write about being excited to go to the sea next week for summer holidays?"
+        → Do NOT extract dates.
+
+        User: "Show me entries written around Christmas 2024."
+        → Extract date range.
+
+        If no explicit search time range is present → return null.
+        """
         try:
             logger.debug("Fetching response from LLM model")
             response = await self.client.beta.chat.completions.parse(

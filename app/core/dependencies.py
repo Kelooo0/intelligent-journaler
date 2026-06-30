@@ -11,6 +11,8 @@ from app.models.models import EntryModel, UserModel
 from app.schemas.schemas import TokenData
 from app.services.ai.base import AIService
 from app.services.ai.factory import ai_service
+from app.services.vector.base import VectorBase
+from app.services.vector.factory import vector_service
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
@@ -86,3 +88,7 @@ async def validate_entry(
 
 def get_ai() -> AIService:
     return ai_service()
+
+
+def get_vector() -> VectorBase:
+    return vector_service()
