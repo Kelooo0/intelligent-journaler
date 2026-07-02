@@ -1,6 +1,3 @@
-from unittest.mock import MagicMock
-
-import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import select
@@ -8,7 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.pool import StaticPool
 
 from app.core.config import settings
-from app.core.database import Base, get_db
+from app.core.database import Base
+from app.core.dependencies import get_ai, get_db, get_vector
 from app.main import app
 
 engine = create_async_engine(
@@ -34,12 +32,37 @@ async def db_session():
         await conn.run_sync(Base.metadata.drop_all)
 
 
+@pytest_asyncio.fixture(autouse=True)
+async def use_mock(monkeypatch):
+    monkeypatch.setattr(settings, "LLM_PROVIDER", "mock")
+
+
 @pytest_asyncio.fixture
-async def client(db_session):
+async def ai_service():
+    return get_ai()
+
+
+@pytest_asyncio.fixture
+async def vector_service():
+    return get_vector()
+
+
+@pytest_asyncio.fixture
+async def client(db_session, ai_service, vector_service):
     async def override_get_db():
         yield db_session
 
     app.dependency_overrides[get_db] = override_get_db
+
+    async def override_get_ai():
+        yield ai_service
+
+    app.dependency_overrides[get_ai] = override_get_ai
+
+    async def override_get_vector():
+        yield vector_service
+
+    app.dependency_overrides[get_vector] = override_get_vector
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -72,21 +95,8 @@ async def test_user(authorized_client, db_session):
     )
 
 
-@pytest.fixture
-def mock_ai(mocker):
-    mock = mocker.patch("app.services.entries_service.ai_service.analyze_entry")
-    mock_response = MagicMock()
-    mock_response.summary = "A good day"
-    mock_response.mood = "happy"
-    mock_response.sentiment_score = 0.9
-    mock_response.tags = ["relax"]
-    mock.return_value = mock_response
-
-    return mock
-
-
 @pytest_asyncio.fixture
-async def test_entry(db_session, test_user, mock_ai):
+async def test_entry(db_session, test_user, ai_service):
     from app.schemas.schemas import EntryCreate
     from app.services.entries_service import create_entry_service
 
@@ -95,4 +105,4 @@ async def test_entry(db_session, test_user, mock_ai):
         " watched my favorite series all day"
     )
 
-    return await create_entry_service(entry_in, db_session, test_user)
+    return await create_entry_service(entry_in, db_session, test_user, ai_service)

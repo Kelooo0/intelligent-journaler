@@ -43,7 +43,7 @@ class EntryCreate(EntryBase):
 
 
 class EntryUpdate(EntryBase):
-    content: str | None = Field(default=None, min_length=30)
+    content: str | None = Field(default=None, min_length=30, max_length=10000)
 
 
 class Tag(BaseModel):
