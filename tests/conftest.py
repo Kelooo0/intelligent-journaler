@@ -6,8 +6,10 @@ from sqlalchemy.pool import StaticPool
 
 from app.core.config import settings
 from app.core.database import Base
-from app.core.dependencies import get_ai, get_db, get_vector
+from app.core.dependencies import get_ai_service, get_db, get_vector_service
 from app.main import app
+from app.services.entries_service import EntryService
+from app.services.tags_service import TagService
 
 engine = create_async_engine(
     settings.TEST_DATABASE_URL,
@@ -39,12 +41,12 @@ async def use_mock(monkeypatch):
 
 @pytest_asyncio.fixture
 async def ai_service():
-    return get_ai()
+    return get_ai_service()
 
 
 @pytest_asyncio.fixture
 async def vector_service():
-    return get_vector()
+    return get_vector_service()
 
 
 @pytest_asyncio.fixture
@@ -57,12 +59,12 @@ async def client(db_session, ai_service, vector_service):
     async def override_get_ai():
         yield ai_service
 
-    app.dependency_overrides[get_ai] = override_get_ai
+    app.dependency_overrides[get_ai_service] = override_get_ai
 
     async def override_get_vector():
         yield vector_service
 
-    app.dependency_overrides[get_vector] = override_get_vector
+    app.dependency_overrides[get_vector_service] = override_get_vector
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -96,13 +98,24 @@ async def test_user(authorized_client, db_session):
 
 
 @pytest_asyncio.fixture
-async def test_entry(db_session, test_user, ai_service):
+async def tag_service():
+    return TagService()
+
+
+@pytest_asyncio.fixture
+async def entry_service(ai_service, tag_service):
+    return EntryService(ai=ai_service, tag=tag_service)
+
+
+@pytest_asyncio.fixture
+async def test_entry(db_session, test_user, entry_service):
     from app.schemas.schemas import EntryCreate
-    from app.services.entries_service import create_entry_service
 
     entry_in = EntryCreate(
         content="Today was a very good day, I woke up, went for a walk,"
         " watched my favorite series all day"
     )
 
-    return await create_entry_service(entry_in, db_session, test_user, ai_service)
+    return await entry_service.create_entry_service(
+        entry_data=entry_in, db=db_session, current_user=test_user
+    )

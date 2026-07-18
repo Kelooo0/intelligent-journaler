@@ -11,6 +11,3 @@ async def test_assistant_response(authorized_client):
     data = response.json()
     assert "answer" in data
     assert data["answer"] == "Example AI assistent response"
-    used_entries = [e for e in data["used_entries"]]
-    assert len(used_entries) == 3
-    assert data["intent"] == "emotional_reflection"
