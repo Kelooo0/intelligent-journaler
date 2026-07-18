@@ -8,7 +8,7 @@ from app.models.models import TagModel
 class TagService:
     @staticmethod
     async def get_tags_str(db: AsyncSession, user_id: int) -> str:
-        logger.debug(f"Fetching existing tags from the database for user id: {user_id}")
+        logger.debug("Fetching existing tags for user_id: {}", user_id)
         existing_tags = (
             await db.scalars(select(TagModel).where(TagModel.user_id == user_id))
         ).all()
@@ -30,12 +30,12 @@ class TagService:
                 )
             )
             if tag is None:
-                logger.debug(f"Adding new tag to database: {clean_tag}")
+                logger.debug("Adding a new tag to database: {}", clean_tag)
                 tag = TagModel(user_id=user_id, name=clean_tag)
                 db.add(tag)
                 await db.flush()
             db_tags.append(tag)
         logger.debug(
-            f"Returning a list of processed tag objects with {len(db_tags)} elements"
+            "Returning a list of processed tag objects with {} elements", len(db_tags)
         )
         return db_tags

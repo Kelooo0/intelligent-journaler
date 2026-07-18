@@ -14,7 +14,6 @@ class AIService(AIBase):
 
     async def analyze_entry(self, content: str, tags: str) -> EntryAnalysis:
         logger.info("Analyzing entry content")
-        logger.debug("Setting up prompts for analyzing entry content")
         user_prompt = f"""
         Entry content: {content}
         Available existing tags: {tags}

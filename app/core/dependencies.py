@@ -60,10 +60,10 @@ async def get_current_user(
         raise credentials_exception
     user = await db.scalar(select(UserModel).where(UserModel.email == token_data.email))
     if user is None:
-        logger.error("User with email fetched from JWT token not found")
+        logger.error("User not found")
         raise credentials_exception
     logger.debug(
-        f"Succesfully fetched current user's database model, user id: {user.id}"
+        "Succesfully fetched current user's database model for user_id: {}", user.id
     )
     return user
 
@@ -76,13 +76,13 @@ async def validate_entry(
     logger.debug("Performing entry validation")
     entry = await db.scalar(select(EntryModel).where(EntryModel.id == id))
     if entry is None:
-        logger.debug(f"Entry id: {id} doesn't exist")
+        logger.debug("Entry with id: {} doesn't exist", id)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Entry not found"
         )
     if entry.user_id != current_user.id:
         logger.debug(
-            f"User id: {current_user.id} doesn't have access for entry id: {id}"
+            "User with id: {} doesn't have access for entry id: {}", current_user.id, id
         )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

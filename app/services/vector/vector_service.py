@@ -18,7 +18,7 @@ class VectorService(VectorBase):
 
     async def find_matching(
         self,
-        *
+        *,
         query_content: str,
         start_date_str: str,
         end_date_str: str,
@@ -26,8 +26,8 @@ class VectorService(VectorBase):
         db: AsyncSession,
     ) -> list[VectorResult]:
         logger.debug("Searching for matching entries")
-        logger.debug(f"Matching entries start date: {start_date_str}")
-        logger.debug(f"Matching entries end date: {end_date_str}")
+        logger.debug("Matching entries start date: {}", start_date_str)
+        logger.debug("Matching entries end date: {}", end_date_str)
         query_embedding = await self.ai.get_embedding(query_content)
         if query_embedding is None:
             logger.error("An error occured while generating query embedding")
@@ -59,12 +59,12 @@ class VectorService(VectorBase):
             VectorResult(entry=entry, relevance_score=score)
             for entry, score in result.all()
         ]
-        logger.debug(f"Number of rows retrieved: {len(results)}")
+        logger.debug("Number of rows retrieved: {}", len(results))
         if results:
             high = [
                 r for r in results if r.relevance_score >= settings.VECTOR_HIGH_TRESHOLD
             ]
-            logger.debug(f"{len(high)} highly matching entries found")
+            logger.debug("{} highly matching entries found", len(high))
 
             medium = [
                 r
@@ -73,7 +73,7 @@ class VectorService(VectorBase):
                 <= r.relevance_score
                 < settings.VECTOR_HIGH_TRESHOLD
             ]
-            logger.debug(f"{len(medium)} moderately matching entries found")
+            logger.debug("{} moderately matching entries found", len(medium))
 
             max_score = results[0].relevance_score
             score_delta = max_score - settings.VECTOR_DELTA
@@ -86,7 +86,7 @@ class VectorService(VectorBase):
                 >= settings.VECTOR_FALLBACK_TRESHOLD
                 and r.relevance_score >= score_delta
             ]
-            logger.debug(f"{len(fallback_matches)} fallback entries found")
+            logger.debug("{} fallback entries found", len(fallback_matches))
 
             matching_entries = high + medium + fallback_matches
 

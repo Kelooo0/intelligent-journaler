@@ -25,10 +25,10 @@ class EntryService:
         end_date_str: str | None = None,
         tags: list[str] | None = None,
     ) -> list[EntryModel]:
-        logger.debug(f"Fetching all entries for user id: {current_user.id}")
-        logger.debug(f"Entries start date: {start_date_str}")
-        logger.debug(f"Entries end date: {end_date_str}")
-        logger.debug(f"Entries tags: {tags}")
+        logger.debug("Fetching all entries for user_id: {}", current_user.id)
+        logger.debug("Entries start date: {}", start_date_str)
+        logger.debug("Entries end date: {}", end_date_str)
+        logger.debug("Entries tags: {}", tags)
         logger.debug("Building a database query")
         query = select(EntryModel).where(EntryModel.user_id == current_user.id)
         if start_date_str:
@@ -54,13 +54,13 @@ class EntryService:
                         detail="Invalid tag input, tag can't be empty",
                     )
                 if len(t) < 3:
-                    logger.error(f"User provided a too short tag name: {t}")
+                    logger.error("User provided a too short tag name: {}", t)
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
                         detail=f"{t} is invalid, tag must be at least 3 characters",
                     )
                 if len(t) > 20:
-                    logger.error(f"User provided a too long tag name: {t}")
+                    logger.error("User provided a too long tag name: {}", t)
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
                         detail=f"{t} is invalid, tag must be less than 20 characters",
@@ -80,7 +80,7 @@ class EntryService:
         db: AsyncSession,
         current_user: UserModel,
     ) -> EntryModel:
-        logger.info(f"Creating a new entry for user id: {current_user.id}")
+        logger.info("Creating a new entry for user_id: {}", current_user.id)
         tags = await self.tag.get_tags_str(db, current_user.id)
         analysis = await self.ai.analyze_entry(entry_data.content, tags)
         embedding = await self.ai.get_embedding(entry_data.content)
@@ -100,7 +100,7 @@ class EntryService:
         await db.commit()
         await db.refresh(new_entry)
         logger.info(
-            f"Succesfully added a new entry to database, entry id: {new_entry.id}"
+            "Succesfully added a new entry to database, entry_id: {}", new_entry.id
         )
         return new_entry
 
@@ -111,7 +111,7 @@ class EntryService:
         entry: EntryModel,
         db: AsyncSession,
     ) -> EntryModel:
-        logger.debug(f"Updating entry id: {entry.id}")
+        logger.debug("Updating entry with id: {}", entry.id)
         update_dict = update_data.model_dump(exclude_unset=True)
         new_content = update_dict.get("content")
         content_changed = new_content is not None and new_content != entry.content
@@ -120,7 +120,7 @@ class EntryService:
             setattr(entry, key, value)
         logger.debug("Checking for changed entry content")
         if content_changed:
-            logger.debug(f"Generating a new analysis for entry id: {entry.id} ")
+            logger.debug("Generating a new analysis for entry id: {} ", entry.id)
             tags = await self.tag.get_tags_str(db, entry.user_id)
             analysis = await self.ai.analyze_entry(entry.content, tags)
             embedding = await self.ai.get_embedding(entry.content)
@@ -133,12 +133,12 @@ class EntryService:
             entry.tags = db_tags
             logger.debug("Assigned updated tags")
         await db.commit()
-        logger.info(f"Entry updated succesfully, entry id: {entry.id}")
+        logger.info("Entry updated succesfully, entry_id: {}", entry.id)
         return entry
 
     @staticmethod
     async def delete_entry_service(*, entry: EntryModel, db: AsyncSession) -> None:
-        logger.debug(f"Deleting entry id: {entry.id}")
+        logger.debug("Deleting entry id: {}", entry.id)
         await db.delete(entry)
         await db.commit()
         logger.info("Entry deleted succesfully")

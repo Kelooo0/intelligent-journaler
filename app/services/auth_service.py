@@ -26,10 +26,11 @@ class AuthService:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists"
             )
-        logger.debug("User with provided email not found")
+        logger.info("User with provided email not found")
 
     @staticmethod
     def get_password_hash(password: str) -> str:
+        logger.debug("Creating hashed password")
         pw_bytes = password.encode("utf-8")
         salt = bcrypt.gensalt()
         pw_hashed = bcrypt.hashpw(pw_bytes, salt)
@@ -37,13 +38,12 @@ class AuthService:
 
     async def register_user(self, user_data: UserCreate, db: AsyncSession) -> UserModel:
         logger.info("Registering a new user")
-        logger.debug("Creating hashed password")
         password_hash = self.get_password_hash(user_data.password)
         new_user = UserModel(email=user_data.email, password=password_hash)
         db.add(new_user)
         await db.commit()
         await db.refresh(new_user)
-        logger.info(f"Created user with id: {new_user.id}")
+        logger.info("Created user with id: {}", new_user.id)
         return new_user
 
     @staticmethod
@@ -62,7 +62,7 @@ class AuthService:
                 detail="Incorrect email or password",
                 headers={"WWW-Authentication": "Bearer"},
             )
-        logger.info(f"Succesfully authenticated user id: {user.id}")
+        logger.info("Succesfully authenticated user_id: {}", user.id)
         return user
 
     @staticmethod

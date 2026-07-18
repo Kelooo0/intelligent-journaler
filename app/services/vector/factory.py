@@ -12,7 +12,7 @@ from app.services.vector.vector_service import VectorService
 @lru_cache
 def vector_service(ai: AIBase) -> VectorBase:
     if settings.LLM_PROVIDER == "openai":
-        logger.debug("Selected LLM provider: OpenAI")
+        logger.debug("Selected LLM provider for vector service: OpenAI")
         return VectorService(ai=ai)
-    logger.debug("Selected LLM provider: Mock")
+    logger.debug("Selected LLM provider for vector service: Mock")
     return MockVector()

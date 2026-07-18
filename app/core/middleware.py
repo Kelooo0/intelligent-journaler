@@ -12,7 +12,7 @@ async def log_request_middleware(request: Request, call_next):
     request_id = str(uuid.uuid4())[:8]
 
     with logger.contextualize(request_id=request_id):
-        logger.info(f"Incoming request {request.method} {request.url.path}")
+        logger.info("Incoming request {} {}", request.method, request.url.path)
         try:
             start_time = time.time()
 
@@ -20,8 +20,9 @@ async def log_request_middleware(request: Request, call_next):
 
             process_time = (start_time - time.time()) * 1000
             logger.info(
-                f"Request completed in {process_time:.2f}ms with"
-                f" status code {response.status_code}"
+                "Request completed in {:.2f}ms with status code {}",
+                process_time,
+                response.status_code,
             )
 
             response.headers["X-Request-ID"] = request_id
@@ -30,6 +31,6 @@ async def log_request_middleware(request: Request, call_next):
             raise
         except Exception:
             logger.exception(
-                f"Request failed while {request.method} {request.url.path}"
+                "Request failed while {} {}", request.method, request.url.path
             )
             raise

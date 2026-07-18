@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.core.logging_config import setup_logging
 from app.core.middleware import log_request_middleware
-from app.routers import auth, entries, assistant
+from app.routers import assistant, auth, entries
 
 setup_logging()
 

@@ -11,7 +11,7 @@ from app.services.ai.mock_ai_service import AIMockService
 @lru_cache
 def ai_service() -> AIBase:
     if settings.LLM_PROVIDER == "openai":
-        logger.debug("Selected LLM provider: OpenAI")
+        logger.debug("Selected LLM provider for AI service: OpenAI")
         return AIService()
-    logger.debug("Selected LLM provider: Mock")
+    logger.debug("Selected LLM provider for AI service: Mock")
     return AIMockService()

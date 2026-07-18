@@ -26,7 +26,7 @@ class ToolExecutor:
             arguments = tool.arguments
             call_id = tool.call_id
             if tool_name == "get_entries":
-                logger.debug(f"Calling {tool_name} for user_id: {current_user.id}")
+                logger.debug("Calling {} for user_id: {}", tool_name, current_user.id)
                 entries = await self.entry.get_entries_service(
                     db=db,
                     current_user=current_user,
@@ -44,7 +44,7 @@ class ToolExecutor:
                     ToolOutput(name=tool_name, call_id=call_id, output=entries_json)
                 )
             if tool_name == "create_entry":
-                logger.debug(f"Calling {tool_name} for user_id: {current_user.id}")
+                logger.debug("Calling {} for user_id: {}", tool_name, current_user.id)
                 entry_content = EntryCreate(content=arguments["entry_data"]["content"])
                 new_entry = await self.entry.create_entry_service(
                     entry_data=entry_content, db=db, current_user=current_user
@@ -55,7 +55,7 @@ class ToolExecutor:
                     ToolOutput(name=tool_name, call_id=call_id, output=entry_json)
                 )
             if tool_name == "find_matching":
-                logger.debug(f"Calling {tool_name} for user_id: {current_user.id}")
+                logger.debug("Calling {} for user_id: {}", tool_name, current_user.id)
                 matching_entries = await self.vector.find_matching(
                     query_content=arguments["query_content"],
                     start_date_str=arguments["start_date"],

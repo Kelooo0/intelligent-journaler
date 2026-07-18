@@ -12,7 +12,7 @@ from app.services.ai.tools.executor import ToolExecutor
 @lru_cache
 def assistant_service(executor: ToolExecutor) -> AssistantBase:
     if settings.LLM_PROVIDER == "openai":
-        logger.debug("Selected LLM provider: OpenAI")
+        logger.debug("Selected LLM provider for assistant service: OpenAI")
         return AssistantService(executor=executor)
-    logger.debug("Selected LLM provider: Mock")
+    logger.debug("Selected LLM provider for assistant service: Mock")
     return MockAssistantService()

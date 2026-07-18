@@ -10,6 +10,7 @@ from app.services.vector.base import VectorBase
 class MockVector(VectorBase):
     async def find_matching(
         self,
+        *,
         query_content: str,
         start_date_str: str,
         end_date_str: str,

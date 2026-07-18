@@ -28,8 +28,8 @@ class AssistantService(AssistantBase):
         current_user: UserModel,
         db: AsyncSession,
     ) -> ResponseSchema:
+        logger.debug("Generating proper assistant response")
         today = datetime.now(UTC).date()
-        logger.debug("Setting up system prompt for generating assistant response")
         system_prompt = f"""
         You are an AI assistant for a personal journaling application.
 
@@ -136,8 +136,8 @@ class AssistantService(AssistantBase):
             logger.info("Returning final assistant response")
             return final_response.output_parsed
         except Exception as e:
-            logger.exception("An error occured while generating AI response")
+            logger.exception("An error occured while generating assistant response")
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="An error occured while generating AI response",
+                detail="An error occured while generating assistant response",
             ) from e

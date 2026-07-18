@@ -40,7 +40,7 @@ async def get_entries(
 
 @router.get("/{id}", response_model=Entry)
 async def get_entry(entry: EntryModel = Depends(validate_entry)) -> Entry:
-    logger.info(f"Returning entry data for entry id: {entry.id}")
+    logger.info("Returning entry data for entry id: {}", entry.id)
     return entry
 
 

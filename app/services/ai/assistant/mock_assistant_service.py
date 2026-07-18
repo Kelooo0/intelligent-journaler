@@ -10,6 +10,7 @@ from app.services.ai.assistant.base import AssistantBase
 class MockAssistantService(AssistantBase):
     async def response(
         self,
+        *,
         query_content: str,
         current_user: UserModel,
         db: AsyncSession,

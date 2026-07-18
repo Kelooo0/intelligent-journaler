@@ -4,7 +4,7 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.core.config import settings
 
-logger.info("Initializing database engine")
+logger.debug("Initializing database engine")
 
 engine = create_async_engine(settings.DATABASE_URL)
 
