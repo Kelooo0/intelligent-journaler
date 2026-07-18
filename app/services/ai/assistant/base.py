@@ -3,17 +3,15 @@ from abc import ABC, abstractmethod
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.models import UserModel
-from app.schemas.schemas import VectorResult
+from app.schemas.schemas import ResponseSchema
 
 
-class VectorBase(ABC):
+class AssistantBase(ABC):
     @abstractmethod
-    async def find_matching(
+    async def response(
         self,
         query_content: str,
-        start_date_str: str,
-        end_date_str: str,
         current_user: UserModel,
         db: AsyncSession,
-    ) -> list[VectorResult]:
+    ) -> ResponseSchema:
         pass

@@ -7,22 +7,28 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.models.models import EntryModel, UserModel
-from app.schemas.schemas import DatesSchema, VectorResult
-from app.services.ai.base import AIService
+from app.schemas.schemas import VectorResult
+from app.services.ai.base import AIBase
 from app.services.vector.base import VectorBase
 
 
 class VectorService(VectorBase):
-    async def find_matching_service(
+    def __init__(self, ai: AIBase) -> None:
+        self.ai = ai
+
+    async def find_matching(
         self,
+        *
         query_content: str,
-        dates: DatesSchema,
+        start_date_str: str,
+        end_date_str: str,
         current_user: UserModel,
         db: AsyncSession,
-        ai: AIService,
     ) -> list[VectorResult]:
         logger.debug("Searching for matching entries")
-        query_embedding = await ai.get_embedding(query_content)
+        logger.debug(f"Matching entries start date: {start_date_str}")
+        logger.debug(f"Matching entries end date: {end_date_str}")
+        query_embedding = await self.ai.get_embedding(query_content)
         if query_embedding is None:
             logger.error("An error occured while generating query embedding")
             raise HTTPException(
@@ -34,13 +40,17 @@ class VectorService(VectorBase):
             EntryModel,
             (1 - EntryModel.embedding.cosine_distance(query_embedding)).label("score"),
         ).where(EntryModel.user_id == current_user.id)
-        if dates.start_date:
-            start_dt = datetime.combine(dates.start_date, time.min)
-            database_query = database_query.filter(EntryModel.created_at >= start_dt)
-        if dates.end_date:
-            next_day = dates.end_date + timedelta(days=1)
-            end_dt = datetime.combine(next_day, time.min)
-            database_query = database_query.filter(EntryModel.created_at < end_dt)
+        if start_date_str:
+            start_date_dt = datetime.strptime(start_date_str, "%Y-%m-%d")
+            start_date = datetime.combine(start_date_dt, time.min)
+            database_query = database_query.filter(EntryModel.created_at >= start_date)
+            logger.debug("Added start date to database query")
+        if end_date_str:
+            end_date_dt = datetime.strptime(end_date_str, "%Y-%m-%d")
+            next_day = end_date_dt + timedelta(days=1)
+            end_date = datetime.combine(next_day, time.min)
+            database_query = database_query.filter(EntryModel.created_at < end_date)
+            logger.debug("Added end date to database query")
         database_query = database_query.order_by(
             EntryModel.embedding.cosine_distance(query_embedding)
         ).limit(settings.VECTOR_TOP_K_RETRIEVAL)

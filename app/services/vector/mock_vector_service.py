@@ -3,19 +3,18 @@ from datetime import UTC, datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.models import UserModel
-from app.schemas.schemas import DatesSchema, Entry, Tag, VectorResult
-from app.services.ai.base import AIService
+from app.schemas.schemas import Entry, Tag, VectorResult
 from app.services.vector.base import VectorBase
 
 
 class MockVector(VectorBase):
-    async def find_matching_service(
+    async def find_matching(
         self,
         query_content: str,
-        dates: DatesSchema,
+        start_date_str: str,
+        end_date_str: str,
         current_user: UserModel,
         db: AsyncSession,
-        ai: AIService,
     ) -> list[VectorResult]:
         return [
             VectorResult(

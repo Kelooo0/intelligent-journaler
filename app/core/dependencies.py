@@ -9,8 +9,13 @@ from app.core.config import settings
 from app.core.database import SessionLocal
 from app.models.models import EntryModel, UserModel
 from app.schemas.schemas import TokenData
-from app.services.ai.base import AIService
+from app.services.ai.assistant.base import AssistantBase
+from app.services.ai.assistant.factory import assistant_service
+from app.services.ai.base import AIBase
 from app.services.ai.factory import ai_service
+from app.services.ai.tools.executor import ToolExecutor
+from app.services.entries_service import EntryService
+from app.services.tags_service import TagService
 from app.services.vector.base import VectorBase
 from app.services.vector.factory import vector_service
 
@@ -86,9 +91,32 @@ async def validate_entry(
     return entry
 
 
-def get_ai() -> AIService:
+def get_ai_service() -> AIBase:
     return ai_service()
 
 
-def get_vector() -> VectorBase:
-    return vector_service()
+def get_vector_service(ai: AIBase = Depends(get_ai_service)) -> VectorBase:
+    return vector_service(ai=ai)
+
+
+def get_tag_service() -> TagService:
+    return TagService()
+
+
+def get_entry_service(
+    ai: AIBase = Depends(get_ai_service), tag: TagService = Depends(get_tag_service)
+) -> EntryService:
+    return EntryService(ai=ai, tag=tag)
+
+
+def get_tool_executor(
+    vector: VectorBase = Depends(get_vector_service),
+    entry: EntryService = Depends(get_entry_service),
+) -> ToolExecutor:
+    return ToolExecutor(vector=vector, entry=entry)
+
+
+def get_assistant_service(
+    executor: ToolExecutor = Depends(get_tool_executor),
+) -> AssistantBase:
+    return assistant_service(executor=executor)
