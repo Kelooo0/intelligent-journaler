@@ -8,6 +8,5 @@ async def test_assistant_response(authorized_client):
     )
 
     assert response.status_code == 200
-    data = response.json()
-    assert "answer" in data
-    assert data["answer"] == "Example AI assistent response"
+    assert response.headers["content-type"].startswith("text/plain")
+    assert response.text == "This is a mock assistant response"
