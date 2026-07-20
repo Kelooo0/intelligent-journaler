@@ -1,5 +1,16 @@
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, Table, Text
+from sqlalchemy import (
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Table,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -8,8 +19,8 @@ from app.core.database import Base
 
 class UserModel(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
+    id = Column(Integer, primary_key=True)
+    email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
 
     entries = relationship("EntryModel", back_populates="owner", lazy="selectin")
@@ -26,7 +37,9 @@ entry_tags = Table(
 class EntryModel(Base):
     __tablename__ = "entries"
 
-    id = Column(Integer, primary_key=True, index=True)
+    __table_args__ = (Index("ix_entries_user_id_created_at", "user_id", "created_at"),)
+
+    id = Column(Integer, primary_key=True)
     content = Column(Text, nullable=False)
     summary = Column(String, nullable=True)
     mood = Column(String, nullable=True)
@@ -44,9 +57,10 @@ class EntryModel(Base):
 
 class TagModel(Base):
     __tablename__ = "tags"
+    __table_args__ = (UniqueConstraint("user_id", "name", name="uq_user_id_name"),)
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(20), nullable=False, index=True)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(20), nullable=False)
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
