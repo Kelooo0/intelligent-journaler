@@ -1,9 +1,14 @@
-export function logout() {
-    localStorage.removeItem("access_token");
-}
+import { useNavigate } from "react-router";
 
 export default function LogoutButton() {
+    const navigate = useNavigate();
+
+    function handleLogout() {
+        localStorage.removeItem("access_token");
+        navigate("/", {"state": {"message": "Logged out succesfully", "type": "success"}})
+    }
+
     return (
-        <button onClick={logout}>Logout</button>
+        <button onClick={handleLogout}>Logout</button>
     )
 }

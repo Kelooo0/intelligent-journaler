@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { createEntry } from "../../api/entriesApi";
-import type { Entry } from "../../types/entry";
+import { useNavigate } from "react-router";
 
-type CreateEntryProps = {
-    onSuccess: (result: Entry) => void;
+type CreateEntryFormProps = {
     onError: (message: string) => void;
 }
 
 export default function CreateEntryForm({
-    onSuccess,
     onError
-}: CreateEntryProps) {
+}: CreateEntryFormProps) {
+    const navigate = useNavigate();
     const [content, setContent] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -19,16 +18,18 @@ export default function CreateEntryForm({
         event.preventDefault();
         try {
             setIsLoading(true);
-            onError("");
 
-            const data = await createEntry({ content });
-            onSuccess(data);
+            await createEntry({ content });
+            navigate("/entries", {
+                "state": {"message": "Entry added succesfully", "type": "success"}
+            });
         } catch (error) {
             onError(
-                error instanceof Error
-                ? error.message
-                : "An unexpected error occured",
+            error instanceof Error
+            ? error.message
+            : "Failed to add entry"
             );
+
         } finally {
             setIsLoading(false);
         }

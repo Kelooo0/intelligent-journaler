@@ -12,3 +12,18 @@ export function createEntry(
         body: JSON.stringify(payload),
     });
 }
+
+export function getEntries() {
+    return apiRequest<Entry[]>("/entries",{
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+}
+
+export function deleteEntry(id: number): Promise<void> {
+    return apiRequest<void>(`/entries/${id}`, {
+        method: "DELETE"
+    });
+}

@@ -24,5 +24,9 @@ export async function apiRequest<T>(
             message || `A request error occured: ${response.status}`,
         );
     }
+
+    if(response.status === 204) {
+        return undefined as T;
+    }
     return response.json() as Promise<T>;
 }

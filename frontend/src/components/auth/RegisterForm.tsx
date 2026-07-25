@@ -39,9 +39,9 @@ export default function RegisterForm({
     return (
         <form onSubmit={handleSubmit}>
             <label htmlFor="email">Email:</label>
-            <input id="email" type="email" onChange={(event) => setEmail(event.target.value)} disabled={isLoading}></input>
+            <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={isLoading}></input>
             <label htmlFor="password">Password:</label>
-            <input id="password" type="password" onChange={(event) => setPassword(event.target.value)} disabled={isLoading}></input>
+            <input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isLoading}></input>
             <button type="submit" disabled={isLoading}>{isLoading ? "..." : "Register"}</button>
         </form>
     )

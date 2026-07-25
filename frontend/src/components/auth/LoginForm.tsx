@@ -1,16 +1,15 @@
 import { useState } from "react"
-import type { TokenResponse} from "../../types/auth";
 import { login } from "../../api/authApi";
+import { useNavigate } from "react-router";
 
 type LoginFormProps = {
-    onSuccess: (result: TokenResponse) => void;
     onError: (message: string) => void;
 };
 
 export default function LoginForm({
-    onSuccess,
     onError
 }: LoginFormProps) {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +26,8 @@ export default function LoginForm({
                 const form_data_string = form_data.toString()
                 const data = await login(form_data_string);
                 localStorage.setItem("access_token", data.access_token)
-                onSuccess(data);
+                navigate("/entries", {"state": {"message": "Logged in succesfully.", "type": "success"}})
+
             } catch (error) {
                 onError(
                     error instanceof Error
@@ -41,9 +41,9 @@ export default function LoginForm({
     return (
         <form onSubmit={handleSubmit}>
             <label htmlFor="email">Email:</label>
-            <input id="email" type="email" onChange={(event) => setEmail(event.target.value)} disabled={isLoading}></input>
+            <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={isLoading}></input>
             <label htmlFor="password">Password:</label>
-            <input id="password" type="password" onChange={(event) => setPassword(event.target.value)} disabled={isLoading}></input>
+            <input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isLoading}></input>
             <button type="submit" disabled={isLoading}>{isLoading ? "..." : "Login"}</button>
         </form>
     )

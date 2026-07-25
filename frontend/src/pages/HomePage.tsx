@@ -1,7 +1,25 @@
+import { Link } from "react-router"
+import { useLocation } from "react-router"
+
+interface LocationState {
+    message?: string;
+    type?: "success" | "error";
+}
 export default function HomePage() {
+    const location  = useLocation();
+    const state = location.state as LocationState | null;
     return (
         <main>
-            <h1>Intelligent Journaler</h1>
+            <section>
+                <h1>Intelligent Journaler</h1>
+            </section>
+            <section>
+                {state?.message && (<p role="status">{state.message}</p>)}
+            </section>
+            <section>
+                <Link to="/auth/login">Login</Link>
+                <Link to="/auth/register">Register</Link>
+            </section>
         </main>
     )
 }
