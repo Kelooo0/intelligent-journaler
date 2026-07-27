@@ -26,7 +26,7 @@ export default function LoginForm({
                 const form_data_string = form_data.toString()
                 const data = await login(form_data_string);
                 localStorage.setItem("access_token", data.access_token)
-                navigate("/entries", {"state": {"message": "Logged in succesfully.", "type": "success"}})
+                navigate("/entries/list", {"state": {"message": "Logged in succesfully.", "type": "success"}})
 
             } catch (error) {
                 onError(

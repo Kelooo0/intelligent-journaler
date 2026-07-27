@@ -12,7 +12,6 @@ export default function EntriesPage() {
     const location = useLocation();
     const state = location.state as LocationState | null;
     const [error, setError] = useState("");
-    const [deleted, setDeleted] = useState(false);
 
     return (
         <main>
@@ -22,10 +21,9 @@ export default function EntriesPage() {
            <section>
                 {state?.message && (<p role={state.type === "error" ? "error" : "status"}>{state.message}</p>)}
                 {error && <p role="error">{error}</p>}
-                {deleted && <p role="status">Entry deleted succesfully</p>}
            </section>
            <section>
-                <EntriesList onError={setError} onDelete={setDeleted}/>
+                <EntriesList onError={setError} />
            </section>
         </main>
     )

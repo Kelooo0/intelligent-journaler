@@ -25,7 +25,6 @@ export default function EntryCard({
         <time dateTime={entry.created_at}>
             {new Date(entry.created_at).toLocaleString("en-EN")}
         </time>
-        <Link to={`/entries/${entry.id}`}>More...</Link>
         <Link to={`/entries/${entry.id}/edit`}>Edit</Link>
         <button type="button" onClick={() => onDelete(entry.id)}>Delete</button>
         <hr />

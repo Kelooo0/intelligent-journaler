@@ -4,7 +4,7 @@ import LogoutButton from "../auth/Logout";
 export default function Navbar() {
     return (
         <nav>
-            <Link to="/entries">Entries</Link>
+            <Link to="/entries/list">Entries</Link>
             <LogoutButton />
         </nav>
     )

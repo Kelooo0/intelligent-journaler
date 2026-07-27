@@ -14,11 +14,11 @@ export default function HomePage() {
                 <h1>Intelligent Journaler</h1>
             </section>
             <section>
-                {state?.message && (<p role="status">{state.message}</p>)}
+                {state?.message && (<p role={state.type === "error" ? "error" : "status"}>{state.message}</p>)}
             </section>
             <section>
-                <Link to="/auth/login">Login</Link>
-                <Link to="/auth/register">Register</Link>
+                <Link to="/login">Login</Link>
+                <Link to="/register">Register</Link>
             </section>
         </main>
     )

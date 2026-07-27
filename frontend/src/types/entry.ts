@@ -1,4 +1,4 @@
-export interface CreateEntryPayload {
+export interface EntryPayload {
     content: string;
 }
 

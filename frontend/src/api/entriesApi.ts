@@ -1,8 +1,8 @@
 import { apiRequest } from "./client";
-import type { CreateEntryPayload, Entry } from "../types/entry";
+import type { EntryPayload, Entry } from "../types/entry";
 
 export function createEntry(
-    payload: CreateEntryPayload,
+    payload: EntryPayload,
 ): Promise<Entry> {
     return apiRequest<Entry>("/entries", {
         method: "POST",
@@ -25,5 +25,26 @@ export function getEntries() {
 export function deleteEntry(id: number): Promise<void> {
     return apiRequest<void>(`/entries/${id}`, {
         method: "DELETE"
+    });
+}
+
+export function getEntry(id: number): Promise<Entry> {
+    return apiRequest<Entry>(`/entries/${id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+}
+
+export function updateEntry(
+    payload: EntryPayload, id: number
+): Promise<Entry> {
+    return apiRequest<Entry>(`/entries/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
     });
 }
