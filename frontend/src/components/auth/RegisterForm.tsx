@@ -1,6 +1,6 @@
 import { useState } from "react"
 import type { User, RegisterPayload } from "../../types/auth";
-import { register } from "../../api/authApi";
+import { Register } from "../../api/authApi";
 
 type RegisterFormProps = {
     onSuccess: (result: User) => void;
@@ -24,7 +24,7 @@ export default function RegisterForm({
                     "email": email,
                     "password": password,
                 }
-                const data = await register(payload);
+                const data = await Register(payload);
                 onSuccess(data);
             } catch (error) {
                 onError(

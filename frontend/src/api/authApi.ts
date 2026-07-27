@@ -1,7 +1,7 @@
 import { apiRequest } from "./client";
 import type { RegisterPayload, User, TokenResponse } from "../types/auth";
 
-export function register(
+export function Register(
     payload: RegisterPayload,
 ): Promise<User> {
     return apiRequest<User>("/auth/register", {
@@ -13,7 +13,7 @@ export function register(
     })
 }
 
-export function login(
+export function Login(
     form_data_string: string,
 ): Promise<TokenResponse> {
     return apiRequest<TokenResponse>("/auth/login", {

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { login } from "../../api/authApi";
+import { Login } from "../../api/authApi";
 import { useNavigate } from "react-router";
 
 type LoginFormProps = {
@@ -24,7 +24,7 @@ export default function LoginForm({
                 form_data.append("username", email);
                 form_data.append("password", password);
                 const form_data_string = form_data.toString()
-                const data = await login(form_data_string);
+                const data = await Login(form_data_string);
                 localStorage.setItem("access_token", data.access_token)
                 navigate("/entries/list", {"state": {"message": "Logged in succesfully.", "type": "success"}})
 

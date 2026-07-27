@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import EntriesList from "../components/entries/EntriesList";
 import { useState } from "react";
 import { useLocation } from "react-router";
+import Assistant from "../components/assistant/Assistant";
 
 interface LocationState {
     message?: string;
@@ -22,6 +23,7 @@ export default function EntriesPage() {
                 {state?.message && (<p role={state.type === "error" ? "error" : "status"}>{state.message}</p>)}
                 {error && <p role="error">{error}</p>}
            </section>
+          <Assistant />
            <section>
                 <EntriesList onError={setError} />
            </section>

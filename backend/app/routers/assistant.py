@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.post("")
-async def find_matching(
+async def assistant_response(
     user_query: QuerySchema,
     current_user: UserModel = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
