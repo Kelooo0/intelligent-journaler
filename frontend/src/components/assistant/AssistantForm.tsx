@@ -5,12 +5,14 @@ type AssistantFormProps = {
     onError: (message: string) => void;
     onStart: () => void;
     onChunk: (chunk: string) => void;
+    onSuccess: () => Promise<void>;
 }
 
 export default function AssistantForm({
     onError,
     onStart,
-    onChunk
+    onChunk,
+    onSuccess
 }: AssistantFormProps) {
     const [content, setContent] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +24,7 @@ export default function AssistantForm({
                 onStart();
 
                 await AssistantResponse({content}, onChunk)
+                onSuccess();
             } catch (error) {
                 onError(
                 error instanceof Error

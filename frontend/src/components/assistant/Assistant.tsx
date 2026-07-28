@@ -1,7 +1,13 @@
 import AssistantForm from "./AssistantForm"
 import { useState } from "react"
 
-export default function Assistant() {
+type AssistantProps = {
+    onSuccess: () => Promise<void>;
+}
+
+export default function Assistant({
+    onSuccess
+}: AssistantProps) {
     const [error, setError] = useState("");
     const [response, setResponse] = useState("");
 
@@ -17,6 +23,7 @@ export default function Assistant() {
                 onChunk={(chunk) => {
                     setResponse((previousResponse) => previousResponse + chunk);
                     }}
+                onSuccess={onSuccess}
                 />
             </section>
             <section>
