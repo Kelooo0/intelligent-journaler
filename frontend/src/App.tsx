@@ -8,21 +8,29 @@ import LoggedOutLayout from "./components/layout/LoggedOutLayout"
 import EntryDetailsPage from "./pages/EntryDetailsPage"
 import EntryCreatePage from "./pages/EntryCreatePage"
 import EntryUpdatePage from "./pages/EntryUpdatePage"
+import ProtectedRoute from "./components/auth/ProtectedRoute"
+import CheckLoggedIn from "./components/auth/CheckLoggedIn"
 
 function App() {
 
   return (
     <Routes>
-        <Route path="/home" element={<HomePage />} />
+        <Route element={<CheckLoggedIn />}>
+            <Route path="/" element={<HomePage />} />
+        </Route>
         <Route element={<LoggedOutLayout />}>
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<LoginPage />} />
+            <Route element={<CheckLoggedIn />}>
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/login" element={<LoginPage />} />
+            </Route>
         </Route>
         <Route element={<AppLayout />}>
-            <Route path="/entries/list" element={<EntriesPage />} />
-            <Route path="/entries/new" element={<EntryCreatePage />} />
-            <Route path="/entries/:id/details" element={<EntryDetailsPage />} />
-            <Route path="/entries/:id/edit" element={<EntryUpdatePage />} />
+            <Route element={<ProtectedRoute />}>
+                <Route path="/entries/list" element={<EntriesPage />} />
+                <Route path="/entries/new" element={<EntryCreatePage />} />
+                <Route path="/entries/:id/details" element={<EntryDetailsPage />} />
+                <Route path="/entries/:id/edit" element={<EntryUpdatePage />} />
+            </Route>
         </Route>
     </Routes>
   )

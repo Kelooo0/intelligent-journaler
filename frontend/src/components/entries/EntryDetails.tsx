@@ -31,7 +31,7 @@ export default function EntryDetails({
                     onError(
                         error instanceof Error
                         ? error.message
-                        : "Failed to fetch entry details"
+                        : "Failed to fetch entry details."
                     )
                     return;
                 } finally {
@@ -51,12 +51,12 @@ export default function EntryDetails({
             setIsLoading(true);
             onError("");
             await deleteEntry(id);
-            navigate("/entries/list", {"state": {"message": "Entry deleted succesfully", "type": "success"}})
+            navigate("/entries/list", {"state": {"message": "Entry deleted succesfully.", "type": "success"}})
         } catch(error) {
             onError(
                 error instanceof Error
                 ? error.message
-                : "Failed to delete entry"
+                : "Failed to delete entry."
             );
         } finally {
             setIsLoading(false);

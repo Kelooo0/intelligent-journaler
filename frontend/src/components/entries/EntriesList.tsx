@@ -27,7 +27,7 @@ export default function EntriesList({
                 onError(
                     error instanceof Error
                     ? error.message
-                    : "Failed to fetch entries"
+                    : "Failed to fetch entries."
                 )
                 return;
             } finally {

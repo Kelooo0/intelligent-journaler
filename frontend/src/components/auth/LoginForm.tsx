@@ -32,7 +32,7 @@ export default function LoginForm({
                 onError(
                     error instanceof Error
                     ? error.message
-                    : "An unexpected error occured",
+                    : "An unexpected error occured.",
                 );
             } finally {
                 setIsLoading(false);

@@ -5,7 +5,7 @@ export default function LogoutButton() {
 
     function handleLogout() {
         localStorage.removeItem("access_token");
-        navigate("/home", {"state": {"message": "Logged out succesfully", "type": "success"}})
+        navigate("/", {"state": {"message": "Logged out succesfully.", "type": "success"}})
     }
 
     return (

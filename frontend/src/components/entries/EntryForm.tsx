@@ -26,13 +26,13 @@ export default function EntryForm({
             if(operation === "create") {
                 await createEntry({ content });
                 navigate("/entries/list", {
-                    "state": {"message": "Entry added succesfully", "type": "success"}
+                    "state": {"message": "Entry added succesfully.", "type": "success"}
                 });
             }
             if(operation === "update" && entryId) {
                 await updateEntry({ content }, entryId);
                 navigate(`/entries/${entryId}/details`, {
-                    "state": {"message": "Entry updated succesfully", "type": "success"}
+                    "state": {"message": "Entry updated succesfully.", "type": "success"}
                 });
             }
 
@@ -40,7 +40,7 @@ export default function EntryForm({
             onError(
             error instanceof Error
             ? error.message
-            : "Failed to add entry"
+            : "Failed to add entry."
             );
 
         } finally {
