@@ -18,6 +18,18 @@ export async function apiRequest<T>(
         headers
     });
 
+    if(response.status === 401) {
+        if(token) {
+            localStorage.removeItem("access_token");
+            sessionStorage.setItem("state", JSON.stringify({"message": "Session expired. Please log in again.", "type": "info"}));
+            window.location.href = "/";
+            throw new Error("Session expired.");
+        }
+    }
+
+    if(response.status === 204) {
+        return undefined as T;
+    }
 
     if(!response.ok) {
         const message = await response.text();
@@ -27,10 +39,6 @@ export async function apiRequest<T>(
         throw new Error(
             final_message,
         );
-    }
-
-    if(response.status === 204) {
-        return undefined as T;
     }
     return response.json() as Promise<T>;
 }

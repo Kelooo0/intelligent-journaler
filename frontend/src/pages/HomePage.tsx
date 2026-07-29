@@ -8,23 +8,42 @@ interface LocationState {
     message?: string;
     type?: "success" | "error" | "info";
 }
+
+type SavedMessage = {
+    message: string;
+    type: "success" | "error" | "info";
+}
+
 export default function HomePage() {
     const location  = useLocation();
     const navigate = useNavigate();
     const state = location.state as LocationState | null;
     const [message, setMessage] = useState(state?.message ?? "");
-    const [type, setType] = useState<LocationState["type"]>(state?.type ?? "info");
+    const [type, setType] = useState(state?.type ?? "info");
 
     useEffect(() => {
-    if (state?.message) {
-        setMessage(state.message);
-        setType(state.type ?? "info");
-        navigate(location.pathname, {
-            replace: true,
-            state: null,
-        });
-    }
+        if (state?.message) {
+            setMessage(state.message);
+            setType(state.type ?? "info");
+            navigate(location.pathname, {
+                replace: true,
+                state: null,
+            });
+        }
   }, [state?.message, navigate]);
+
+    useEffect(() => {
+        const state = sessionStorage.getItem("state");
+
+        if(!state) {
+            return;
+        }
+
+        const data = JSON.parse(state) as SavedMessage;
+        setMessage(data.message);
+        setType(data.type);
+        sessionStorage.removeItem("state");
+    }, []);
 
     return (
         <main>

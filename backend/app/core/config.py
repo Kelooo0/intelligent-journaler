@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     VECTOR_MEDIUM_TRESHOLD: float = 0.65
     VECTOR_FALLBACK_TRESHOLD: float = 0.30
     VECTOR_DELTA: float = 0.10
+    ACCESS_TOKEN_EXPIRES_MINUTES: int = 60
 
     DB_USER: str
     DB_PASS: str
