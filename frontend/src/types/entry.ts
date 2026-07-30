@@ -17,3 +17,15 @@ export interface Entry {
     created_at: string;
     tags: Tag[];
 }
+
+export interface EntryFilters {
+    start_date: string;
+    end_date: string;
+    tags: string[];
+}
+
+export interface getEntriesPayload {
+    start_date: string | null;
+    end_date: string | null;
+    tags: string[] | null;
+}

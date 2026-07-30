@@ -14,7 +14,7 @@ export default function EntriesList({
         return <p>Loading entries...</p>
     }
     if(entries.length === 0) {
-        return <p>You don't have any entries yet</p>
+        return <p>No entries found</p>
     }
 
     return (
