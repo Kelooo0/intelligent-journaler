@@ -6,11 +6,11 @@ export default function RegisterPage() {
     const [result, setResult] = useState<User | null>(null);
     const [error, setError] = useState("");
     return (
-        <main>
-            <section>
+        <main className="auth-main">
+            <section className="auth-form-container">
                 <RegisterForm onSuccess={setResult} onError={setError}/>
             </section>
-            <section>
+            <section className="auth-messages">
                 {error && <p role="alert">{ error }</p>}
                 {result && <p role="status">Registered succesfully. You may log in now.</p> }
             </section>

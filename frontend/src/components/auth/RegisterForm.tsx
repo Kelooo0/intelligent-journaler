@@ -1,6 +1,7 @@
 import { useState } from "react"
 import type { User, RegisterPayload } from "../../types/auth";
 import { Register } from "../../api/authApi";
+import "./AuthForm.css";
 
 type RegisterFormProps = {
     onSuccess: (result: User) => void;
@@ -37,12 +38,18 @@ export default function RegisterForm({
             }
     }
     return (
-        <form onSubmit={handleSubmit}>
-            <label htmlFor="email">Email:</label>
-            <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={isLoading}></input>
-            <label htmlFor="password">Password:</label>
-            <input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isLoading}></input>
-            <button type="submit" disabled={isLoading}>{isLoading ? "..." : "Register"}</button>
+        <form onSubmit={handleSubmit} className="auth-form">
+            <section className="auth-form-box">
+                <label htmlFor="email">Email:</label>
+                <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={isLoading}></input>
+            </section>
+            <section className="auth-form-box">
+                <label htmlFor="password">Password:</label>
+                <input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isLoading}></input>
+            </section>
+            <section className="auth-form-box">
+                <button type="submit" disabled={isLoading}>{isLoading ? "..." : "Register"}</button>
+            </section>
         </form>
     )
 }

@@ -3,9 +3,13 @@ import LogoutButton from "../auth/Logout";
 
 export default function Navbar() {
     return (
-        <nav>
-            <Link to="/entries/list">Entries</Link>
-            <LogoutButton />
+        <nav className="navbar">
+            <section className="navbar-link-box">
+                <Link to="/entries/list" className="navbar-link">Entries</Link>
+            </section>
+            <section className="navbar-link-box">
+                <LogoutButton />
+            </section>
         </nav>
     )
 }

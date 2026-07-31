@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Login } from "../../api/authApi";
 import { useNavigate } from "react-router";
-
+import "./AuthForm.css";
 type LoginFormProps = {
     onError: (message: string) => void;
 };
@@ -39,12 +39,18 @@ export default function LoginForm({
             }
     }
     return (
-        <form onSubmit={handleSubmit}>
-            <label htmlFor="email">Email:</label>
-            <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={isLoading}></input>
-            <label htmlFor="password">Password:</label>
-            <input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isLoading}></input>
-            <button type="submit" disabled={isLoading}>{isLoading ? "..." : "Login"}</button>
+        <form onSubmit={handleSubmit} className="auth-form">
+            <section className="auth-form-box">
+                <label htmlFor="email">Email:</label>
+                <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={isLoading}></input>
+            </section>
+            <section className="auth-form-box">
+                <label htmlFor="password">Password:</label>
+                <input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isLoading}></input>
+            </section>
+            <section className="auth-form-box">
+                <button type="submit" disabled={isLoading}>{isLoading ? "..." : "Login"}</button>
+            </section>
         </form>
     )
 }

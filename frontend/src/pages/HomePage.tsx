@@ -3,6 +3,7 @@ import { useLocation } from "react-router"
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
 import { useState } from "react";
+import "./HomePage.css";
 
 interface LocationState {
     message?: string;
@@ -46,16 +47,21 @@ export default function HomePage() {
     }, []);
 
     return (
-        <main>
-            <section>
+        <main className="home-main">
+            <section className="home-header">
+                <h2>Welcome to</h2>
                 <h1>Intelligent Journaler</h1>
             </section>
-            <section>
-                {message && (<p role={type === "error" ? "alert" : "status"}>{message}</p>)}
+            <section className="home-buttons">
+                <section className="home-button-box">
+                    <Link to="/login" className="home-link">Log in</Link>
+                </section>
+                 <section className="home-button-box">
+                    <Link to="/register" className="home-link">Register</Link>
+                </section>
             </section>
-            <section>
-                <Link to="/login">Log in</Link>
-                <Link to="/register">Register</Link>
+            <section className="home-messages">
+                {message && (<p role={type === "error" ? "alert" : "status"}>{message}</p>)}
             </section>
         </main>
     )
