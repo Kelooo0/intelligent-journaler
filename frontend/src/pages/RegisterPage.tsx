@@ -1,6 +1,7 @@
 import RegisterForm from "../components/auth/RegisterForm"
 import { useState } from "react"
 import type { User } from "../types/auth"
+import "./Auth.css";
 
 export default function RegisterPage() {
     const [result, setResult] = useState<User | null>(null);

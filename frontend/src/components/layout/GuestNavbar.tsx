@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import "./Navbar.css";
 
-export default function LoggedOutNavbar() {
+export default function GuestNavbar() {
     return (
         <nav className="navbar">
             <section className="navbar-link-box">

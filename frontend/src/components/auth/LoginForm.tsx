@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { Login } from "../../api/authApi";
 import { useNavigate } from "react-router";
-import "./AuthForm.css";
+import "../../pages/Auth.css";
+
 type LoginFormProps = {
     onError: (message: string) => void;
 };

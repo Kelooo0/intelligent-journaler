@@ -1,10 +1,10 @@
 import { Outlet } from "react-router";
-import LoggedOutNavbar from "./LoggedOutNavbar";
+import GuestNavbar from "./GuestNavbar";
 
-export default function LoggedOutLayout() {
+export default function GuestLayout() {
     return (
         <>
-            <LoggedOutNavbar />
+            <GuestNavbar />
 
             <main>
                 <Outlet />

@@ -4,7 +4,7 @@ import RegisterPage from "./pages/RegisterPage"
 import { Route, Routes } from "react-router"
 import AppLayout from "./components/layout/AppLayout"
 import EntriesPage from "./pages/EntriesPage"
-import LoggedOutLayout from "./components/layout/LoggedOutLayout"
+import GuestLayout from "./components/layout/GuestLayout"
 import EntryDetailsPage from "./pages/EntryDetailsPage"
 import EntryCreatePage from "./pages/EntryCreatePage"
 import EntryUpdatePage from "./pages/EntryUpdatePage"
@@ -18,7 +18,7 @@ function App() {
         <Route element={<CheckLoggedIn />}>
             <Route path="/" element={<HomePage />} />
         </Route>
-        <Route element={<LoggedOutLayout />}>
+        <Route element={<GuestLayout />}>
             <Route element={<CheckLoggedIn />}>
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/login" element={<LoginPage />} />

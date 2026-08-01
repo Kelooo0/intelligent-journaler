@@ -1,7 +1,7 @@
 import { useState } from "react"
 import type { User, RegisterPayload } from "../../types/auth";
 import { Register } from "../../api/authApi";
-import "./AuthForm.css";
+import "../../pages/Auth.css";
 
 type RegisterFormProps = {
     onSuccess: (result: User) => void;

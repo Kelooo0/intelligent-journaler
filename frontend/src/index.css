@@ -47,10 +47,6 @@ p[role="alert"] {
     color: var(--color-error);
     font-size: 16px;
 }
-p[role="info"] {
-    color: var(--color-warning);
-    font-size: 16px;
-}
 
 :root {
   --color-bg: #f6f3ee;

@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import LogoutButton from "../auth/Logout";
+import "./Navbar.css";
 
 export default function Navbar() {
     return (

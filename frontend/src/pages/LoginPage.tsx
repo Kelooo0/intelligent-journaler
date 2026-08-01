@@ -1,5 +1,6 @@
 import LoginForm from "../components/auth/LoginForm";
 import { useState } from "react";
+import "./Auth.css";
 
 export default function LoginPage() {
     const [error, setError] = useState("");
