@@ -7,6 +7,9 @@ export default function RegisterPage() {
     const [error, setError] = useState("");
     return (
         <main className="auth-main">
+            <section className="auth-header">
+                <h1>Create account</h1>
+            </section>
             <section className="auth-form-container">
                 <RegisterForm onSuccess={setResult} onError={setError}/>
             </section>

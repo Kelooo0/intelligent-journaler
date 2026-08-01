@@ -49,7 +49,7 @@ export default function LoginForm({
                 <input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={isLoading}></input>
             </section>
             <section className="auth-form-box">
-                <button type="submit" disabled={isLoading}>{isLoading ? "..." : "Login"}</button>
+                <button type="submit" disabled={isLoading}>{isLoading ? "..." : "Log in"}</button>
             </section>
         </form>
     )

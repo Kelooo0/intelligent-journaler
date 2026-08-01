@@ -5,6 +5,9 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     return (
         <main className="auth-main">
+            <section className="auth-header">
+                <h1>Log in</h1>
+            </section>
             <section className="auth-form-container">
                 <LoginForm onError={setError} />
             </section>

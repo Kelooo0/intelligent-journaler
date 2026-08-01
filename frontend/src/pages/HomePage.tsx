@@ -53,11 +53,11 @@ export default function HomePage() {
                 <h1>Intelligent Journaler</h1>
             </section>
             <section className="home-buttons">
-                <section className="home-button-box">
-                    <Link to="/login" className="home-link">Log in</Link>
+                <section className="home-button-box login-box">
+                    <Link to="/login" className="home-link login-link">Log in</Link>
                 </section>
-                 <section className="home-button-box">
-                    <Link to="/register" className="home-link">Register</Link>
+                 <section className="home-button-box register-box">
+                    <Link to="/register" className="home-link register-link">Register</Link>
                 </section>
             </section>
             <section className="home-messages">
