@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import { getEntry } from "../../api/entriesApi";
-import { useParams } from "react-router";
+import { replace, useParams } from "react-router";
 import type { Entry } from "../../types/entry";
 import EntryCard from "./EntryCard";
 import { deleteEntry } from "../../api/entriesApi";
 import { useNavigate } from "react-router";
+import "../../pages/EntryDetails.css";
 
 type EntryDetailsProps = {
     onError: (message: string) => void;
@@ -14,9 +15,10 @@ export default function EntryDetails({
     onError
 }: EntryDetailsProps) {
     const navigate = useNavigate();
-    const { id } = useParams<{ id: string}>();
     const [entry, setEntry] = useState<Entry | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const { id } = useParams<{ id: string}>();
+    const entry_id = Number(id);
 
     useEffect(() => {
             async function load_entry() {
@@ -24,15 +26,23 @@ export default function EntryDetails({
                     setIsLoading(true);
                     onError("");
 
-                    const entry_id = Number(id);
+                    if(!Number.isInteger(entry_id) || entry_id < 0) {
+                        navigate("/entries/list", {
+                            replace: true, "state": {"message": "Invalid entry ID.", "type": "error"}
+                        });
+
+                        return;
+                    }
                     const data = await getEntry(entry_id);
                     setEntry(data);
                 } catch(error) {
-                    onError(
+                    const message =
                         error instanceof Error
                         ? error.message
                         : "Failed to fetch entry details."
-                    )
+                    navigate("/entries/list", {
+                        replace: true, "state": {"message": message, "type": "error"}
+                    });
                     return;
                 } finally {
                     setIsLoading(false);
@@ -66,15 +76,14 @@ export default function EntryDetails({
 
     if(isLoading) {
             return (
-                <section>
-                    <p>Loading entry details...</p>
-                </section>
+                <h1 className="entry-details-loading">Loading entry details...</h1>
             )
         }
 
     return (
-        <section>
+        <>
             {entry && <EntryCard entry={entry} onDelete={handleDelete}/>}
-        </section>
+        </>
+
     )
 }

@@ -1,0 +1,122 @@
+.entry-details-main {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 7rem;
+    width: 100%;
+}
+.entry-details-container {
+    width: 100%;
+    max-width: 1000px;
+    border: 2px solid var(--color-primary);
+    border-radius: 10px;
+}
+.entry-card-id-container {
+    width: 50%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    margin-left: 10px;
+}
+.entry-card-ops {
+    width: 50%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    margin-right: 10px;
+}
+.entry-card-header-container {
+    display: flex;
+    box-sizing: border-box;
+    border-bottom: 2px solid var(--color-primary);
+}
+.ec-op {
+    margin: 5px;
+}
+.entry-card-id {
+    font-size: 24px;
+}
+.entry-card-timestamp {
+    font-size: 16px;
+}
+.entry-card-edit {
+    width: 80px;
+    height: 35px;
+    text-decoration: none;
+    background-color: var(--color-primary);
+    border: 3px solid #354f45;
+    border-radius: 20px;
+    color: white;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.entry-card-edit:hover {
+    font-weight: bolder;
+}
+.entry-card-delete {
+    width: 90px;
+    height: 35px;
+    text-decoration: none;
+    background-color: #a65353;
+    border: 3px solid #7f3f3f;;
+    border-radius: 20px;
+    color: white;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.entry-card-delete:hover {
+    font-weight: bolder;
+}
+
+.analysis-container {
+    display: flex;
+    align-items: center;
+    height: 60px;
+}
+.summary-container {
+    min-height: 60px;
+    height: auto;
+}
+.analysis-data {
+    margin-left: 5px;
+    font-size: 18px;
+}
+.analysis-header {
+    font-weight: bolder;
+    font-size: 18px;
+    margin-left: 10px;
+}
+.tags-container {
+    display: flex;
+}
+.tags-data-container {
+    display: flex;
+    align-items: center;
+}
+.tag {
+    margin: 3px;
+}
+.entry-card-content-container {
+    border-top: 2px solid var(--color-primary);
+    min-height: 60px;
+    height: auto;
+    display: flex;
+    align-items: center;
+}
+.entry-card-content {
+    margin: 10px;
+    font-size: 16px;
+}
+.entry-details-msgs {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

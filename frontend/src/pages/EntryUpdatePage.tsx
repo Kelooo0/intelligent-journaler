@@ -11,7 +11,7 @@ export default function EntryUpdatePage() {
     const navigate = useNavigate();
     const [error, setError] = useState("");
     const { id } = useParams<{ id: string }>();
-    const entry_id = Number(id)
+    const entry_id = Number(id);
     const [entry, setEntry] = useState<Entry>();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -19,17 +19,25 @@ export default function EntryUpdatePage() {
         try {
             setIsLoading(true);
 
-            if(!entry_id) {
+            if(!Number.isInteger(entry_id) || entry_id < 0) {
                 navigate("/entries/list", {
-                    "state": {"message": "Entry not found", "type": "error"}
+                    replace: true, "state": {"message": "Invalid entry ID", "type": "error"}
                 });
+
+                return;
             }
             const entryData = await getEntry(entry_id);
             setEntry(entryData);
         } catch (error) {
+            const message =
+                error instanceof Error
+                ? error.message
+                : "Failed to fetch entry details."
+
             navigate("/entries/list", {
-                "state": {"message": "Entry not found", "type": "error"}
+                replace: true, "state": {"message": message, "type": "error"}
             });
+            return;
         } finally {
             setIsLoading(false);
         }

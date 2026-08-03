@@ -56,6 +56,7 @@ class AIService(AIBase):
         - Base the score on the overall emotional tone of the entry.
 
         Tags:
+        - Do not add tags for information that is not present in the entry.
         - Generate no more than 5 tags.
         - Each tag must contain between 3 and 20 characters.
         - Tags must be unique, concise, relevant, and based only on the entry.
@@ -67,7 +68,11 @@ class AIService(AIBase):
         - Do not translate existing tags.
         - Do not generate generic tags such as "journal", "entry", "life", or "thoughts"
         when a more specific tag is available.
-        - Do not add tags for information that is not present in the entry.
+        - If the entry does not contain meaningful, interpretable content,
+        return an empty list of tags.
+        - Do not infer topics from placeholder text, lorem ipsum, random words,
+        corrupted text, or meaningless content.
+        - It is valid to return zero tags.
 
         When the entry contains too little information, return a neutral and
         conservative analysis instead of guessing.

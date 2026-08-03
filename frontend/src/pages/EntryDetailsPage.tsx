@@ -3,6 +3,7 @@ import EntryDetails from "../components/entries/EntryDetails"
 import { useLocation } from "react-router";
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
+import "./EntryDetails.css";
 
 interface LocationState {
     message?: string;
@@ -29,11 +30,13 @@ export default function EntryDetailsPage() {
     }, [state?.message, navigate]);
 
     return (
-        <main>
-            <EntryDetails onError={setError}/>
-            <section>
+        <main className="entry-details-main">
+            <section className="entry-details-msgs">
                 {message && (<p role={type === "error" ? "alert" : "status"}>{message}</p>)}
                 {error && <p role="alert">{error}</p>}
+            </section>
+            <section className="entry-details-container">
+                <EntryDetails onError={setError}/>
             </section>
         </main>
     )

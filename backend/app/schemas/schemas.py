@@ -101,11 +101,12 @@ class EntryAnalysis(BaseModel):
         default_factory=list,
         max_length=5,
         description=(
-            "Generate up to 5 concise and relevant tags based only on the journal "
+            " Generate up to 5 concise and relevant tags based only on the journal "
             "entry. Each tag must contain between 3 and 20 characters. Reuse matching "
             "tags from 'Available existing tags' when appropriate; otherwise create "
             "new tags in the same language as the entry and in nominative form. "
             "Tags must be unique, specific, and must not contain unsupported information."
+            " If the entry does not contain meaningful, interpretable content, return an empty list of tags."
         ),
     )
 
