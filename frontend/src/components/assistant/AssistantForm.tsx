@@ -6,21 +6,25 @@ type AssistantFormProps = {
     onStart: () => void;
     onChunk: (chunk: string) => void;
     onSuccess: () => Promise<void>;
+    onLoading: (arg0: boolean) => void;
+    loading: boolean;
 }
 
 export default function AssistantForm({
     onError,
     onStart,
     onChunk,
-    onSuccess
+    onSuccess,
+    onLoading,
+    loading,
 }: AssistantFormProps) {
     const [content, setContent] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+
 
     async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
             event.preventDefault();
             try {
-                setIsLoading(true);
+                onLoading(true);
                 onStart();
 
                 await AssistantResponse({content}, onChunk)
@@ -33,13 +37,13 @@ export default function AssistantForm({
                 );
 
             } finally {
-                setIsLoading(false);
+                onLoading(false);
             }
         }
     return(
-        <form onSubmit={handleSubmit}>
-            <textarea placeholder="Ask assistant about your entries..." value={content} onChange={(event) => setContent(event.target.value)} disabled={isLoading}></textarea>
-            <button type="submit" disabled={isLoading}>Ask assistant</button>
+        <form  className="assistant-form" onSubmit={handleSubmit}>
+            <textarea className="assistant-text" placeholder="Ask assistant about your entries..." value={content} onChange={(event) => setContent(event.target.value)} disabled={loading}></textarea>
+            <button className="assistant-submit" type="submit" disabled={loading}>Ask</button>
         </form>
     )
 }

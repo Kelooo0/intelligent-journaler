@@ -9,12 +9,16 @@ export default function EntryPreview({
     entry,
 }: EntryPreviewProps) {
     return (
-    <article>
-        <hr />
-        <h2>Entry #{entry.id}</h2>
-        <p>{entry.content}</p>
-        <Link to={`/entries/${entry.id}/details`}>More...</Link>
-        <hr />
+    <article className="preview-container">
+        <section className="preview-header-container">
+            <h2 className="preview-header">Entry #{entry.id}</h2>
+        </section>
+        <section className="preview-content-container">
+            <p className="preview-content">{entry.content}</p>
+        </section>
+        <section className="preview-link-container">
+            <Link className="preview-link" to={`/entries/${entry.id}/details`}>More...</Link>
+        </section>
     </article>
     )
 }

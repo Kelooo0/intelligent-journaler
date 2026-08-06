@@ -10,17 +10,18 @@ export default function EntriesList({
     entries,
     isLoading
 }: EntriesListProps) {
-    if(isLoading) {
-        return <p>Loading entries...</p>
-    }
-    if(entries.length === 0) {
-        return <p>No entries found</p>
-    }
-
     return (
-        <section>
-            <h1>Your entries</h1>
-            {entries.map((entry) => (<EntryPreview key={entry.id} entry={entry}  /> ))}
+        <section className="entries-page-list">
+            <section className="list-header-container">
+                <h1 className="list-header">Your entries</h1>
+            </section>
+            <section className="entries-list-container">
+                <section className="entries-list">
+                    {entries.map((entry) => (<EntryPreview key={entry.id} entry={entry}  /> ))}
+                    {isLoading && <p className="list-message">Loading...</p>}
+                    {entries.length === 0 && <p className="list-message">No entries found.</p>}
+                </section>
+            </section>
         </section>
     )
 }

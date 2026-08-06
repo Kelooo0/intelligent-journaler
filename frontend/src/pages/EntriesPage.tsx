@@ -8,6 +8,7 @@ import { useNavigate } from "react-router";
 import { getEntries } from "../api/entriesApi";
 import type { Entry, getEntriesPayload, EntryFilters } from "../types/entry";
 import EntriesFilters from "../components/entries/EntriesFilters";
+import "./EntriesPage.css";
 
 interface LocationState {
     message?: string;
@@ -48,6 +49,7 @@ export default function EntriesPage() {
         try {
             setIsLoading(true);
             setError("");
+            setMessage("");
 
             const data = await getEntries(payload);
             setEntries(data);
@@ -87,19 +89,20 @@ export default function EntriesPage() {
     }, [filters]);
 
     return (
-        <main>
-           <section>
-                <Link to="/entries/new">Add entry</Link>
-           </section>
-           <section>
+        <main className="entries-main">
+            <section className="entries-msgs">
                 {message && (<p role={type === "error" ? "alert" : "status"}>{message}</p>)}
                 {error && <p role="alert">{error}</p>}
            </section>
-          <Assistant onSuccess={handleAssistantSuccess}/>
-          <EntriesFilters onApply={load_entries} onFilter={setFilters} filters={filters}/>
-           <section>
+            <section className="entries-create-container">
+                <Link to="/entries/new" className="entries-add-button">Add entry</Link>
+            </section>
+            <section className="entries-main-container">
+                <EntriesFilters onApply={load_entries} onFilter={setFilters} filters={filters} />
                 <EntriesList entries={entries} isLoading={isLoading}/>
-           </section>
+                <Assistant onSuccess={handleAssistantSuccess}/>
+            </section>
+
         </main>
     )
 }
