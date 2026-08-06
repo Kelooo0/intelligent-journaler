@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     VECTOR_FALLBACK_TRESHOLD: float = 0.30
     VECTOR_DELTA: float = 0.10
     ACCESS_TOKEN_EXPIRES_MINUTES: int = 60
+    FRONTEND_URL: str = "http://localhost:5173"
 
     DB_USER: str
     DB_PASS: str
