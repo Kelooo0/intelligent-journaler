@@ -31,7 +31,9 @@ select {
 button {
   cursor: pointer;
 }
-
+input:active {
+    border: inherit;
+}
 a {
   color: inherit;
 }

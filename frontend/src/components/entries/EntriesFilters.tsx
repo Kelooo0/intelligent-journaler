@@ -2,7 +2,8 @@ import type { EntryFilters, getEntriesPayload } from "../../types/entry"
 import { useState } from "react"
 
 type EntriesFiltersProps = {
-    onApply: (payload?: getEntriesPayload) => Promise<void>;
+    onAction: () => void;
+    onClear: () => void;
     onFilter: React.Dispatch<React.SetStateAction<EntryFilters>>;
     filters: EntryFilters;
 }
@@ -14,7 +15,8 @@ const emptyFilters: EntryFilters = {
 }
 
 export default function EntriesFilters({
-    onApply,
+    onAction,
+    onClear,
     onFilter,
     filters,
 }: EntriesFiltersProps) {
@@ -23,11 +25,29 @@ export default function EntriesFilters({
     const [error, setError] = useState("");
 
     function handleClear(): void {
+        onAction();
         setError("");
         onFilter(emptyFilters);
-        onApply();
+        onClear();
+    }
+
+    function setSD(event: React.ChangeEvent<HTMLInputElement>) {
+        onAction();
+        onFilter({
+            ...filters,
+            start_date: event.target.value,
+        });
+    }
+
+    function setED(event: React.ChangeEvent<HTMLInputElement>) {
+        onAction();
+        onFilter({
+            ...filters,
+            end_date: event.target.value,
+        });
     }
     function addTag(): void {
+        onAction();
         setError("");
         const newTag = tagInput.trim();
 
@@ -54,6 +74,7 @@ export default function EntriesFilters({
         setTagInput("");
     }
     function removeTag(tagToRemove: string):void {
+        onAction();
         onFilter((previousFilters) => ({
         ...previousFilters,
         tags: previousFilters.tags.filter((tag) => tag !== tagToRemove,),
@@ -71,17 +92,11 @@ export default function EntriesFilters({
                 <form className="filters-form">
                     <section className="sd-container">
                         <label className="sd-label" htmlFor="start-date">Start date</label>
-                        <input className="sd-value" type="date" id="start-date" value={filters.start_date} onChange={(event) => onFilter({
-                            ...filters,
-                            start_date: event.target.value,
-                        })}></input>
+                        <input className="sd-value" type="date" id="start-date" value={filters.start_date} onChange={(event) => setSD(event)}></input>
                     </section>
                     <section className="ed-container">
                         <label className="ed-label" htmlFor="end-date">End date</label>
-                        <input className="ed-value" type="date" id="end-date" value={filters.end_date} onChange={(event) => onFilter({
-                            ...filters,
-                            end_date: event.target.value
-                        })}></input>
+                        <input className="ed-value" type="date" id="end-date" value={filters.end_date} onChange={(event) => setED(event)}></input>
                     </section>
                     <section className="filters-tags-container">
                         <section className="add-tag-container">

@@ -15,8 +15,8 @@ export default function RegisterPage() {
                 <RegisterForm onSuccess={setResult} onError={setError}/>
             </section>
             <section className="auth-messages">
-                {error && <p role="alert">{ error }</p>}
-                {result && <p role="status">Registered succesfully. You may log in now.</p> }
+                {error && <p className="auth-msg"role="alert">{ error }</p>}
+                {result && <p className="auth-msg" role="status">Registered succesfully. You may log in now.</p> }
             </section>
         </main>
     )

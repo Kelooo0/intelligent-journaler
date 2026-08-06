@@ -1,6 +1,3 @@
-* {
-    border: none solid black;
-}
 .entries-main {
     display: flex;
     flex-direction: column;
@@ -8,10 +5,14 @@
 }
 .entries-msgs {
     width: 100%;
-    height: 25px;
+    min-height: 50px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+.entries-message {
+    margin: 5px;
 }
 .entries-create-container {
     display: flex;
@@ -24,7 +25,7 @@
     height: 40px;
     text-decoration: none;
     background-color: var(--color-primary);
-    border: 3px solid #354f45;
+    border: 2px solid #354f45;
     border-radius: 20px;
     color: white;
     font-size: 22px;
@@ -41,8 +42,8 @@
     height: 70vh;
     max-width: 1600px;
     width: 100%;
-    border: 3px solid #354f45;
-
+    border: 3px solid var(--color-primary);
+    border-radius: 30px;
 }
 .entries-page-list{
     width: 60%;
@@ -70,6 +71,12 @@
     align-items: center;
     justify-content: center;
 }
+.assistant-header-container {
+    border-radius: 0 20px 0 0;
+}
+.filters-header-container {
+    border-radius: 20px 0 0 0;
+}
 .assistant-form-container {
     height: 25%;
     width: 90%;
@@ -86,7 +93,7 @@
     width: 100%;
     height: 50%;
     font-size: 16px;
-    border: 2px solid var(--color-primary);
+    border: 1px solid var(--color-primary);
     border-radius: 10px;
     margin: 10px 0;
 }
@@ -103,24 +110,37 @@
     font-weight: bolder;
 }
 .assistant-msgs {
-    display: flex;
-    justify-content: center;
-    overflow-y: auto;
     height: 50%;
     width: 90%;
-    margin-bottom: 20px;
     border: 2px solid var(--color-primary);
 }
-.assistant-msgs >.message {
+.as-message-container {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
     text-align: center;
+    padding: 10px;
 }
-.assistant-msgs > .message,
-.assistant-msgs > .response {
-    margin: 10px;
+.as-response-container {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-width: 0;
 }
+.response {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
 
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 .entries-msgs,
 .entries-create-container,
 .entries-main-container  {
@@ -184,6 +204,8 @@
 .ed-value {
     font-size: 16px;
     width: 70%;
+    border: 1px solid var(--color-primary);
+    border-radius: 20px;
     text-align: center;
 }
 .add-tag-container {
@@ -194,7 +216,7 @@
 .add-tag-text {
     width: 80%;
     font-size: 16px;
-    border: 2px solid var(--color-primary);
+    border: 1px solid var(--color-primary);
     border-radius: 10px;
 }
 .add-tag-submit {
@@ -202,7 +224,7 @@
     background-color: var(--color-primary);
     color: white;
     border-radius: 20px;
-    border: 2px solid #354f45;;
+    border: 2px solid #354f45;
     font-size: 16px;
 }
 .add-tag-submit:hover {
@@ -225,6 +247,7 @@
     height: 30px;
     background-color: var(--color-primary);
     border-radius: 40px;
+    border: 2px solid #354f45;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -261,23 +284,20 @@
 }
 .preview-container {
     width: 100%;
-    border-bottom: 3px solid var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 .preview-header-container {
-    height: 10%;
     display: flex;
     align-items: center;
 }
 .preview-content-container {
-    height: 80%;
     max-height: 300px;
     overflow: hidden;
 }
 .preview-link-container {
-    height: 10%;
     display: flex;
     align-items: center;
 }
@@ -296,7 +316,7 @@
     height: 30px;
     text-decoration: none;
     background-color: var(--color-primary);
-    border: 3px solid #354f45;
+    border: 2px solid #354f45;
     border-radius: 20px;
     color: white;
     font-size: 16px;
@@ -308,8 +328,22 @@
 .preview-link:hover {
     font-weight: bolder;
 }
-.preview-header-container,
-.preview-content-container,
 .preview-link-container {
-    margin: 5px 0;
+    margin: 10px 0;
+}
+.entries-list {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.list-message-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.list-message {
+    font-size: 18px;
 }

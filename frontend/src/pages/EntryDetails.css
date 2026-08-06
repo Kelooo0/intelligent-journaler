@@ -17,7 +17,7 @@
     display: flex;
     align-items: center;
     justify-content: left;
-    margin-left: 10px;
+    margin-left: 20px;
 }
 .entry-card-ops {
     width: 50%;
@@ -25,21 +25,25 @@
     display: flex;
     align-items: center;
     justify-content: right;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 .entry-card-header-container {
     display: flex;
     box-sizing: border-box;
     border-bottom: 2px solid var(--color-primary);
+    background-color: var(--color-primary);
+    border-radius: 5px 5px 0 0;
 }
 .ec-op {
     margin: 5px;
 }
 .entry-card-id {
     font-size: 24px;
+    color: white;
 }
 .entry-card-timestamp {
-    font-size: 16px;
+    font-size: 18px;
+    color: white;
 }
 .entry-card-edit {
     width: 80px;
@@ -91,7 +95,7 @@
 .analysis-header {
     font-weight: bolder;
     font-size: 18px;
-    margin-left: 10px;
+    margin-left: 20px;
 }
 .tags-container {
     display: flex;
@@ -111,12 +115,16 @@
     align-items: center;
 }
 .entry-card-content {
-    margin: 10px;
+    padding: 10px;
     font-size: 16px;
 }
 .entry-details-msgs {
     width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+.details-msg {
+    margin: 5px;
 }

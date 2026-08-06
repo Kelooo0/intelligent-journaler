@@ -17,9 +17,11 @@ export default function EntriesList({
             </section>
             <section className="entries-list-container">
                 <section className="entries-list">
-                    {entries.map((entry) => (<EntryPreview key={entry.id} entry={entry}  /> ))}
-                    {isLoading && <p className="list-message">Loading...</p>}
-                    {entries.length === 0 && <p className="list-message">No entries found.</p>}
+                    {
+                        isLoading ? (<section className="list-message-container"><p className="list-message">Loading...</p></section>) :
+                        entries.length === 0 ? (<section className="list-message-container"><p className="list-message">No entries found.</p></section>) :
+                        (entries.map((entry) => (<EntryPreview key={entry.id} entry={entry} />)))
+                    }
                 </section>
             </section>
         </section>

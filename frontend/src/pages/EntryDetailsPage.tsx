@@ -31,12 +31,13 @@ export default function EntryDetailsPage() {
 
     return (
         <main className="entry-details-main">
-            <section className="entry-details-msgs">
-                {message && (<p role={type === "error" ? "alert" : "status"}>{message}</p>)}
-                {error && <p role="alert">{error}</p>}
-            </section>
+
             <section className="entry-details-container">
                 <EntryDetails onError={setError}/>
+            </section>
+            <section className="entry-details-msgs">
+                {message && (<p className="details-msg" role={type === "error" ? "alert" : "status"}>{message}</p>)}
+                {error && <p className="details-msg" role="alert">{error}</p>}
             </section>
         </main>
     )

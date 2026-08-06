@@ -46,7 +46,7 @@
 }
 .login-box {
     background-color: var(--color-primary);
-    border: 3px solid var(--color-primary);
+    border: 3px solid #354f45;
     color: white;
 }
 .register-box {

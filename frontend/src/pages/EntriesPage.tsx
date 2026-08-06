@@ -9,6 +9,7 @@ import { getEntries } from "../api/entriesApi";
 import type { Entry, getEntriesPayload, EntryFilters } from "../types/entry";
 import EntriesFilters from "../components/entries/EntriesFilters";
 import "./EntriesPage.css";
+import { useRef } from "react";
 
 interface LocationState {
     message?: string;
@@ -38,7 +39,14 @@ export default function EntriesPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [filters, setFilters] = useState<EntryFilters>(emptyFilters);
 
+    function clearMessage() {
+        setError("");
+        setMessage("");
+    }
+
     async function handleAssistantSuccess() {
+        setError("");
+        setMessage("");
         const payload: getEntriesPayload = {
                     ...filters,
         };
@@ -48,8 +56,6 @@ export default function EntriesPage() {
     async function load_entries(payload: getEntriesPayload = empty_payload) {
         try {
             setIsLoading(true);
-            setError("");
-            setMessage("");
 
             const data = await getEntries(payload);
             setEntries(data);
@@ -85,22 +91,23 @@ export default function EntriesPage() {
         const payload: getEntriesPayload = {
                 ...filters,
         };
+
         void load_entries(payload);
     }, [filters]);
 
     return (
         <main className="entries-main">
             <section className="entries-msgs">
-                {message && (<p role={type === "error" ? "alert" : "status"}>{message}</p>)}
-                {error && <p role="alert">{error}</p>}
+                {message && (<p className="entries-message" role={type === "error" ? "alert" : "status"}>{message}</p>)}
+                {error && <p  className="entries-message" role="alert">{error}</p>}
            </section>
             <section className="entries-create-container">
                 <Link to="/entries/new" className="entries-add-button">Add entry</Link>
             </section>
             <section className="entries-main-container">
-                <EntriesFilters onApply={load_entries} onFilter={setFilters} filters={filters} />
+                <EntriesFilters onAction={clearMessage} onClear={load_entries} onFilter={setFilters} filters={filters} />
                 <EntriesList entries={entries} isLoading={isLoading}/>
-                <Assistant onSuccess={handleAssistantSuccess}/>
+                <Assistant onSuccess={handleAssistantSuccess} onAction={clearMessage}/>
             </section>
 
         </main>
