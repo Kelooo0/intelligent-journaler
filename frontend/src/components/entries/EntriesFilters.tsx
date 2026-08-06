@@ -1,4 +1,4 @@
-import type { EntryFilters, getEntriesPayload } from "../../types/entry"
+import type { EntryFilters } from "../../types/entry"
 import { useState } from "react"
 
 type EntriesFiltersProps = {

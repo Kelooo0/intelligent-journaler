@@ -9,7 +9,6 @@ import { getEntries } from "../api/entriesApi";
 import type { Entry, getEntriesPayload, EntryFilters } from "../types/entry";
 import EntriesFilters from "../components/entries/EntriesFilters";
 import "./EntriesPage.css";
-import { useRef } from "react";
 
 interface LocationState {
     message?: string;

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import { getEntry } from "../../api/entriesApi";
-import { replace, useParams } from "react-router";
+import { useParams } from "react-router";
 import type { Entry } from "../../types/entry";
 import EntryCard from "./EntryCard";
 import { deleteEntry } from "../../api/entriesApi";

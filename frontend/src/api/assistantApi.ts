@@ -1,7 +1,7 @@
 import type { UserQuery } from "../types/assistant";
 import { getErrorMessage } from "./getErrorMessage";
 
-const API_URL = "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
 export async function AssistantResponse(
     content: UserQuery,
