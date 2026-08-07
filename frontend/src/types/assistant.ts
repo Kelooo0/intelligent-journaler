@@ -1,3 +1,3 @@
 export interface UserQuery {
-    content: string;
+  content: string;
 }

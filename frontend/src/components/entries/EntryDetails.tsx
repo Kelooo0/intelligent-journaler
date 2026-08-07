@@ -9,100 +9,92 @@ import { useNavigate } from "react-router";
 import "../../pages/EntryDetails.css";
 
 type EntryDetailsProps = {
-    onError: (message: string) => void;
-}
-export default function EntryDetails({
-    onError
-}: EntryDetailsProps) {
-    const navigate = useNavigate();
-    const [entry, setEntry] = useState<Entry | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const { id } = useParams<{ id: string}>();
-    const entry_id = Number(id);
+  onError: (message: string) => void;
+};
+export default function EntryDetails({ onError }: EntryDetailsProps) {
+  const navigate = useNavigate();
+  const [entry, setEntry] = useState<Entry | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { id } = useParams<{ id: string }>();
+  const entry_id = Number(id);
 
-    useEffect(() => {
+  useEffect(() => {
     if (!Number.isInteger(entry_id) || entry_id < 0) {
-        navigate("/entries/list", {
-            replace: true,
-            state: {
-                message: "Invalid entry ID.",
-                type: "error",
-            },
-        });
+      navigate("/entries/list", {
+        replace: true,
+        state: {
+          message: "Invalid entry ID.",
+          type: "error",
+        },
+      });
 
-        return;
+      return;
     }
 
     let cancelled = false;
 
     async function loadEntry(): Promise<void> {
-        try {
-            const data = await getEntry(entry_id);
+      try {
+        const data = await getEntry(entry_id);
 
-            if (!cancelled) {
-                setEntry(data);
-                setIsLoading(false);
-            }
-        } catch (error) {
-            if (cancelled) {
-                return;
-            }
-
-            const message =
-                error instanceof Error
-                    ? error.message
-                    : "Failed to fetch entry details.";
-
-            navigate("/entries/list", {
-                replace: true,
-                state: {
-                    message,
-                    type: "error",
-                },
-            });
+        if (!cancelled) {
+          setEntry(data);
+          setIsLoading(false);
         }
+      } catch (error) {
+        if (cancelled) {
+          return;
+        }
+
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch entry details.";
+
+        navigate("/entries/list", {
+          replace: true,
+          state: {
+            message,
+            type: "error",
+          },
+        });
+      }
     }
 
     void loadEntry();
 
     return () => {
-        cancelled = true;
+      cancelled = true;
     };
-}, [entry_id, navigate]);
+  }, [entry_id, navigate]);
 
-    async function handleDelete(id:number) {
-        const confirmed = window.confirm("Are you sure you want to delete this entry?");
+  async function handleDelete(id: number) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this entry?",
+    );
 
-        if(!confirmed) {
-            return;
-        }
-        try {
-            setIsLoading(true);
-            onError("");
-            await deleteEntry(id);
-            navigate("/entries/list", {"state": {"message": "Entry deleted succesfully.", "type": "success"}})
-        } catch(error) {
-            onError(
-                error instanceof Error
-                ? error.message
-                : "Failed to delete entry."
-            );
-        } finally {
-            setIsLoading(false);
-        }
-
+    if (!confirmed) {
+      return;
     }
+    try {
+      setIsLoading(true);
+      onError("");
+      await deleteEntry(id);
+      navigate("/entries/list", {
+        state: { message: "Entry deleted succesfully.", type: "success" },
+      });
+    } catch (error) {
+      onError(
+        error instanceof Error ? error.message : "Failed to delete entry.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
-    if(isLoading) {
-            return (
-                <h1 className="entry-details-loading">Loading entry details...</h1>
-            )
-        }
+  if (isLoading) {
+    return <h1 className="entry-details-loading">Loading entry details...</h1>;
+  }
 
-    return (
-        <>
-            {entry && <EntryCard entry={entry} onDelete={handleDelete}/>}
-        </>
-
-    )
+  return <>{entry && <EntryCard entry={entry} onDelete={handleDelete} />}</>;
 }

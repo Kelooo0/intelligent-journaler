@@ -6,12 +6,12 @@
 
 html {
   font-family:
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        sans-serif;
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   line-height: 1.5;
 }
 
@@ -32,7 +32,7 @@ button {
   cursor: pointer;
 }
 input:active {
-    border: inherit;
+  border: inherit;
 }
 a {
   color: inherit;
@@ -42,12 +42,12 @@ img {
   display: block;
 }
 p[role="status"] {
-    color: var(--color-success);
-    font-size: 16px;
+  color: var(--color-success);
+  font-size: 16px;
 }
 p[role="alert"] {
-    color: var(--color-error);
-    font-size: 16px;
+  color: var(--color-error);
+  font-size: 16px;
 }
 
 :root {

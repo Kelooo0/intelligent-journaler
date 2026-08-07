@@ -2,13 +2,13 @@ import { Outlet } from "react-router";
 import GuestNavbar from "./GuestNavbar";
 
 export default function GuestLayout() {
-    return (
-        <>
-            <GuestNavbar />
+  return (
+    <>
+      <GuestNavbar />
 
-            <main>
-                <Outlet />
-            </main>
-        </>
-    )
+      <main>
+        <Outlet />
+      </main>
+    </>
+  );
 }
