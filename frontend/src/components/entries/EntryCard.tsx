@@ -15,12 +15,9 @@ export default function EntryCard({
     <article className="entry-details">
         <section className="entry-card-header-container">
             <section className="entry-card-id-container">
-                <h3 className="entry-card-id">Entry: #{entry.id}</h3>
+                <h3 className="entry-card-id">Entry - <time dateTime={entry.created_at}>{new Date(entry.created_at).toLocaleString("en-EN")}</time></h3>
             </section>
             <section className="entry-card-ops">
-                <time className="entry-card-timestamp ec-op" dateTime={entry.created_at}>
-                {new Date(entry.created_at).toLocaleString("en-EN")}
-                </time>
                 <Link className="entry-card-edit ec-op" to={`/entries/${entry.id}/edit`}>Edit</Link>
                 <button className="entry-card-delete ec-op" type="button" onClick={() => onDelete(entry.id)}>Delete</button>
             </section>

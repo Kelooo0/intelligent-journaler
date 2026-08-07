@@ -11,7 +11,7 @@ export default function EntryPreview({
     return (
     <article className="preview-container">
         <section className="preview-header-container">
-            <h2 className="preview-header">Entry #{entry.id}</h2>
+            <h2 className="preview-header">Entry - <time dateTime={entry.created_at}>{new Date(entry.created_at).toLocaleString("en-EN")}</time></h2>
         </section>
         <section className="preview-content-container">
             <p className="preview-content">{entry.content}</p>

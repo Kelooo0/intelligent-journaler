@@ -61,7 +61,7 @@ export default function EntryUpdatePage() {
     return (
         <main className="entry-op-main">
             <section className="entry-op-header">
-                <h1>Entry #{entry && entry.id}</h1>
+                <h1>Entry - {entry && (<time dateTime={entry.created_at}>{new Date(entry.created_at).toLocaleString("en-EN")}</time>)}</h1>
             </section>
             <section className="entry-form-container">
                 {entry && <EntryUpdateForm onError={setError} entry={entry}/> }

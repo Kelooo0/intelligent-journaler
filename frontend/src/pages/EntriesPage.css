@@ -95,7 +95,7 @@
     font-size: 16px;
     border: 1px solid var(--color-primary);
     border-radius: 10px;
-    margin: 10px 0;
+    margin: 5px 0;
 }
 .assistant-submit {
     width: 70px;
@@ -105,6 +105,7 @@
     border-radius: 20px;
     border: 2px solid #354f45;;
     font-size: 16px;
+    margin: 5px 0;
 }
 .assistant-submit:hover {
     font-weight: bolder;
@@ -122,6 +123,7 @@
     justify-content: center;
     text-align: center;
     padding: 10px;
+    margin: 5px 0;
 }
 .as-response-container {
     width: 100%;
@@ -294,8 +296,12 @@
     align-items: center;
 }
 .preview-content-container {
+    width: 100%;
     max-height: 300px;
     overflow: hidden;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
 }
 .preview-link-container {
     display: flex;
@@ -306,10 +312,13 @@
     font-size: 24px;
 }
 .preview-content {
-    font-size: 16px;
     width: 100%;
-    height: 100%;
     padding: 10px;
+    margin: 0;
+    font-size: 16px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 .preview-link {
     width: 80px;
