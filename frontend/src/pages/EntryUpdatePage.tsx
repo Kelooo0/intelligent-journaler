@@ -13,40 +13,57 @@ export default function EntryUpdatePage() {
     const { id } = useParams<{ id: string }>();
     const entry_id = Number(id);
     const [entry, setEntry] = useState<Entry>();
-    const [isLoading, setIsLoading] = useState(false);
-
-    async function validateEntry(): Promise<void> {
-        try {
-            setIsLoading(true);
-
-            if(!Number.isInteger(entry_id) || entry_id < 0) {
-                navigate("/entries/list", {
-                    replace: true, "state": {"message": "Invalid entry ID", "type": "error"}
-                });
-
-                return;
-            }
-            const entryData = await getEntry(entry_id);
-            setEntry(entryData);
-        } catch (error) {
-            const message =
-                error instanceof Error
-                ? error.message
-                : "Failed to fetch entry details."
-
-            navigate("/entries/list", {
-                replace: true, "state": {"message": message, "type": "error"}
-            });
-            return;
-        } finally {
-            setIsLoading(false);
-        }
-
-    }
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        void validateEntry();
-    }, []);
+    if (!Number.isInteger(entry_id) || entry_id < 0) {
+        navigate("/entries/list", {
+            replace: true,
+            state: {
+                message: "Invalid entry ID",
+                type: "error",
+            },
+        });
+
+        return;
+    }
+
+    let cancelled = false;
+
+    async function loadEntry(): Promise<void> {
+        try {
+            const entryData = await getEntry(entry_id);
+
+            if (!cancelled) {
+                setEntry(entryData);
+                setIsLoading(false);
+            }
+        } catch (error) {
+            if (cancelled) {
+                return;
+            }
+
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : "Failed to fetch entry details.";
+
+            navigate("/entries/list", {
+                replace: true,
+                state: {
+                    message,
+                    type: "error",
+                },
+            });
+        }
+    }
+
+    void loadEntry();
+
+    return () => {
+        cancelled = true;
+    };
+}, [entry_id, navigate]);
 
     if(isLoading) {
         return (

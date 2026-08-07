@@ -21,35 +21,54 @@ export default function EntryDetails({
     const entry_id = Number(id);
 
     useEffect(() => {
-            async function load_entry() {
-                try {
-                    setIsLoading(true);
-                    onError("");
+    if (!Number.isInteger(entry_id) || entry_id < 0) {
+        navigate("/entries/list", {
+            replace: true,
+            state: {
+                message: "Invalid entry ID.",
+                type: "error",
+            },
+        });
 
-                    if(!Number.isInteger(entry_id) || entry_id < 0) {
-                        navigate("/entries/list", {
-                            replace: true, "state": {"message": "Invalid entry ID.", "type": "error"}
-                        });
+        return;
+    }
 
-                        return;
-                    }
-                    const data = await getEntry(entry_id);
-                    setEntry(data);
-                } catch(error) {
-                    const message =
-                        error instanceof Error
-                        ? error.message
-                        : "Failed to fetch entry details."
-                    navigate("/entries/list", {
-                        replace: true, "state": {"message": message, "type": "error"}
-                    });
-                    return;
-                } finally {
-                    setIsLoading(false);
-                }
+    let cancelled = false;
+
+    async function loadEntry(): Promise<void> {
+        try {
+            const data = await getEntry(entry_id);
+
+            if (!cancelled) {
+                setEntry(data);
+                setIsLoading(false);
             }
-            load_entry()
-        }, []);
+        } catch (error) {
+            if (cancelled) {
+                return;
+            }
+
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : "Failed to fetch entry details.";
+
+            navigate("/entries/list", {
+                replace: true,
+                state: {
+                    message,
+                    type: "error",
+                },
+            });
+        }
+    }
+
+    void loadEntry();
+
+    return () => {
+        cancelled = true;
+    };
+}, [entry_id, navigate]);
 
     async function handleDelete(id:number) {
         const confirmed = window.confirm("Are you sure you want to delete this entry?");

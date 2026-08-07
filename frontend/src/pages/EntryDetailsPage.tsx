@@ -15,19 +15,17 @@ export default function EntryDetailsPage() {
     const navigate = useNavigate();
     const state = location.state as LocationState | null;
     const [error, setError] = useState("");
-    const [message, setMessage] = useState(state?.message ?? "");
-    const [type, setType] = useState<LocationState["type"]>(state?.type ?? "info");
+    const [message] = useState(() => state?.message ?? "");
+    const [type] = useState(() => state?.type ?? "info");
 
     useEffect(() => {
     if (state?.message) {
-        setMessage(state.message);
-        setType(state.type ?? "info");
-        navigate(location.pathname, {
-            replace: true,
-            state: null,
-        });
+    navigate(location.pathname, {
+        replace: true,
+        state: null,
+    });
     }
-    }, [state?.message, navigate]);
+    }, [state?.message, navigate, location.pathname]);
 
     return (
         <main className="entry-details-main">

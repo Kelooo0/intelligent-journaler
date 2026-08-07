@@ -18,33 +18,41 @@ type SavedMessage = {
 export default function HomePage() {
     const location  = useLocation();
     const navigate = useNavigate();
-    const state = location.state as LocationState | null;
-    const [message, setMessage] = useState(state?.message ?? "");
-    const [type, setType] = useState(state?.type ?? "info");
+    const locationState = location.state as LocationState | null;
+    const [notification] =
+        useState<SavedMessage | null>(() => {
+            if (locationState?.message) {
+                return {
+                    message: locationState.message,
+                    type: locationState.type ?? "info",
+                };
+            }
+
+            const savedState = sessionStorage.getItem("state");
+
+            if (!savedState) {
+                return null;
+            }
+
+            try {
+                return JSON.parse(savedState) as SavedMessage;
+            } catch {
+                return null;
+            }
+        });
+    const message = notification?.message ?? "";
+    const type = notification?.type ?? "info";
 
     useEffect(() => {
-        if (state?.message) {
-            setMessage(state.message);
-            setType(state.type ?? "info");
+        sessionStorage.removeItem("state");
+
+        if (locationState?.message) {
             navigate(location.pathname, {
                 replace: true,
                 state: null,
             });
         }
-  }, [state?.message, navigate]);
-
-    useEffect(() => {
-        const state = sessionStorage.getItem("state");
-
-        if(!state) {
-            return;
-        }
-
-        const data = JSON.parse(state) as SavedMessage;
-        setMessage(data.message);
-        setType(data.type);
-        sessionStorage.removeItem("state");
-    }, []);
+    }, [locationState?.message, location.pathname, navigate]);
 
     return (
         <main className="home-main">

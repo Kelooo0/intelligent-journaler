@@ -32,8 +32,8 @@ export default function EntriesPage() {
     const navigate = useNavigate();
     const state = location.state as LocationState | null;
     const [error, setError] = useState("");
-    const [message, setMessage] = useState(state?.message ?? "");
-    const [type, setType] = useState<LocationState["type"]>(state?.type ?? "info");
+    const [message, setMessage] = useState(() => state?.message ?? "");
+    const [type, setType] = useState(() => state?.type ?? "info");
     const [entries, setEntries] = useState<Entry[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filters, setFilters] = useState<EntryFilters>(emptyFilters);
@@ -41,6 +41,7 @@ export default function EntriesPage() {
     function clearMessage() {
         setError("");
         setMessage("");
+        setType("info");
     }
 
     async function handleAssistantSuccess() {
@@ -72,14 +73,12 @@ export default function EntriesPage() {
 
     useEffect(() => {
     if (state?.message) {
-        setMessage(state.message);
-        setType(state.type ?? "info");
-        navigate(location.pathname, {
-            replace: true,
-            state: null,
-        });
+    navigate(location.pathname, {
+        replace: true,
+        state: null,
+    });
     }
-    }, [state?.message, navigate]);
+    }, [state?.message, navigate, location.pathname]);
 
 
     useEffect(() => {
