@@ -25,21 +25,25 @@ The AI features are powered by the OpenAI API. An API key is required to use the
 
 > The video demonstrates the application's main features using the deployed version on Render. The AI assistant is shown running locally with the real OpenAI integration, while the deployed version uses mock AI responses for security and cost-control purposes.
 
+## Live Demo
+
+Try the deployed application: [Intelligent Journaler](https://intelligent-journaler.onrender.com)
+
 ### Screenshots
 
 #### Tests
 
 ![Tests](assets/img/pytest.PNG)
 
-#### Journal Dashboard
+#### Homepage
 
-![Home page](assets/img/home.PNG)
+![Homepage](assets/img/home.PNG)
 
 #### Journal Dashboard
 
 ![Journal dashboard](assets/img/dashboard.PNG)
 
-#### Entry Editor
+#### Entry details
 
 ![Entry details](assets/img/details.PNG)
 
