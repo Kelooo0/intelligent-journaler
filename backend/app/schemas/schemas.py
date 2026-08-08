@@ -106,7 +106,8 @@ class EntryAnalysis(BaseModel):
             "tags from 'Available existing tags' when appropriate; otherwise create "
             "new tags in the same language as the entry and in nominative form. "
             "Tags must be unique, specific, and must not contain unsupported information."
-            " If the entry does not contain meaningful, interpretable content, return an empty list of tags."
+            " If the entry does not contain meaningful, "
+            "interpretable content, return an empty list of tags."
         ),
     )
 

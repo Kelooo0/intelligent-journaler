@@ -1,3 +1,5 @@
+from typing import Annotated
+
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -37,7 +39,7 @@ async def get_db():
 
 
 async def get_current_user(
-    db: AsyncSession = Depends(get_db), token: str = Depends(oauth2_scheme)
+    db: Annotated[AsyncSession, Depends(get_db)], token: Annotated[str, Depends(oauth2_scheme)]
 ) -> UserModel:
     logger.debug("Fetching current user's database model")
     credentials_exception = HTTPException(
@@ -47,9 +49,7 @@ async def get_current_user(
     )
     try:
         logger.debug("Decoding JWT token")
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
-        )
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
             logger.error("No email found in user's payload")
@@ -57,33 +57,27 @@ async def get_current_user(
         token_data = TokenData(email=email)
     except jwt.PyJWTError:
         logger.error("A PyJWT error occured")
-        raise credentials_exception
+        raise credentials_exception from None
     user = await db.scalar(select(UserModel).where(UserModel.email == token_data.email))
     if user is None:
         logger.error("User not found")
         raise credentials_exception
-    logger.debug(
-        "Succesfully fetched current user's database model for user_id: {}", user.id
-    )
+    logger.debug("Succesfully fetched current user's database model for user_id: {}", user.id)
     return user
 
 
 async def validate_entry(
     id: int,
-    db: AsyncSession = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[UserModel, Depends(get_current_user)],
 ) -> EntryModel:
     logger.debug("Performing entry validation")
     entry = await db.scalar(select(EntryModel).where(EntryModel.id == id))
     if entry is None:
         logger.debug("Entry with id: {} doesn't exist", id)
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Entry not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Entry not found")
     if entry.user_id != current_user.id:
-        logger.debug(
-            "User with id: {} doesn't have access for entry id: {}", current_user.id, id
-        )
+        logger.debug("User with id: {} doesn't have access for entry id: {}", current_user.id, id)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Entry not found",
@@ -95,7 +89,7 @@ def get_ai_service() -> AIBase:
     return ai_service()
 
 
-def get_vector_service(ai: AIBase = Depends(get_ai_service)) -> VectorBase:
+def get_vector_service(ai: Annotated[AIBase, Depends(get_ai_service)]) -> VectorBase:
     return vector_service(ai=ai)
 
 
@@ -104,19 +98,20 @@ def get_tag_service() -> TagService:
 
 
 def get_entry_service(
-    ai: AIBase = Depends(get_ai_service), tag: TagService = Depends(get_tag_service)
+    ai: Annotated[AIBase, Depends(get_ai_service)],
+    tag: Annotated[TagService, Depends(get_tag_service)],
 ) -> EntryService:
     return EntryService(ai=ai, tag=tag)
 
 
 def get_tool_executor(
-    vector: VectorBase = Depends(get_vector_service),
-    entry: EntryService = Depends(get_entry_service),
+    vector: Annotated[VectorBase, Depends(get_vector_service)],
+    entry: Annotated[EntryService, Depends(get_entry_service)],
 ) -> ToolExecutor:
     return ToolExecutor(vector=vector, entry=entry)
 
 
 def get_assistant_service(
-    executor: ToolExecutor = Depends(get_tool_executor),
+    executor: Annotated[ToolExecutor, Depends(get_tool_executor)],
 ) -> AssistantBase:
     return assistant_service(executor=executor)

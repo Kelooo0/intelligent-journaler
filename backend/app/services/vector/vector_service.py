@@ -56,14 +56,11 @@ class VectorService(VectorBase):
         ).limit(settings.VECTOR_TOP_K_RETRIEVAL)
         result = await db.execute(database_query)
         results = [
-            VectorResult(entry=entry, relevance_score=score)
-            for entry, score in result.all()
+            VectorResult(entry=entry, relevance_score=score) for entry, score in result.all()
         ]
         logger.debug("Number of rows retrieved: {}", len(results))
         if results:
-            high = [
-                r for r in results if r.relevance_score >= settings.VECTOR_HIGH_TRESHOLD
-            ]
+            high = [r for r in results if r.relevance_score >= settings.VECTOR_HIGH_TRESHOLD]
             logger.debug("{} highly matching entries found", len(high))
 
             medium = [

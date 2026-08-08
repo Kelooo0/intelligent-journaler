@@ -36,13 +36,9 @@ class ToolExecutor:
                 )
                 serialized_entries = [Entry.model_validate(entry) for entry in entries]
                 entries_json = (
-                    TypeAdapter(list[Entry])
-                    .dump_json(serialized_entries)
-                    .decode("utf-8")
+                    TypeAdapter(list[Entry]).dump_json(serialized_entries).decode("utf-8")
                 )
-                used_tools.append(
-                    ToolOutput(name=tool_name, call_id=call_id, output=entries_json)
-                )
+                used_tools.append(ToolOutput(name=tool_name, call_id=call_id, output=entries_json))
             if tool_name == "create_entry":
                 logger.debug("Calling {} for user_id: {}", tool_name, current_user.id)
                 entry_content = EntryCreate(content=arguments["entry_data"]["content"])
@@ -51,9 +47,7 @@ class ToolExecutor:
                 )
                 serialized_entry = Entry.model_validate(new_entry)
                 entry_json = serialized_entry.model_dump_json()
-                used_tools.append(
-                    ToolOutput(name=tool_name, call_id=call_id, output=entry_json)
-                )
+                used_tools.append(ToolOutput(name=tool_name, call_id=call_id, output=entry_json))
             if tool_name == "find_matching":
                 logger.debug("Calling {} for user_id: {}", tool_name, current_user.id)
                 matching_entries = await self.vector.find_matching(
@@ -64,14 +58,10 @@ class ToolExecutor:
                     db=db,
                 )
                 matching_entries_json = (
-                    TypeAdapter(list[VectorResult])
-                    .dump_json(matching_entries)
-                    .decode("utf-8")
+                    TypeAdapter(list[VectorResult]).dump_json(matching_entries).decode("utf-8")
                 )
                 used_tools.append(
-                    ToolOutput(
-                        name=tool_name, call_id=call_id, output=matching_entries_json
-                    )
+                    ToolOutput(name=tool_name, call_id=call_id, output=matching_entries_json)
                 )
         logger.info("Returning outputs of used tools")
         return used_tools

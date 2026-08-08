@@ -99,9 +99,7 @@ class EntryService:
         db.add(new_entry)
         await db.commit()
         await db.refresh(new_entry)
-        logger.info(
-            "Succesfully added a new entry to database, entry_id: {}", new_entry.id
-        )
+        logger.info("Succesfully added a new entry to database, entry_id: {}", new_entry.id)
         return new_entry
 
     async def update_entry_service(

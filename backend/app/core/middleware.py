@@ -30,7 +30,5 @@ async def log_request_middleware(request: Request, call_next):
         except HTTPException:
             raise
         except Exception:
-            logger.exception(
-                "Request failed while {} {}", request.method, request.url.path
-            )
+            logger.exception("Request failed while {} {}", request.method, request.url.path)
             raise

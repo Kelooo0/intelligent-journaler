@@ -40,9 +40,7 @@ async def test_create_entry(authorized_client, db_session, test_user):
     from app.models.models import EntryModel
 
     entry = await db_session.scalar(
-        select(EntryModel).where(
-            EntryModel.user_id == test_user.id, EntryModel.id == entry_id
-        )
+        select(EntryModel).where(EntryModel.user_id == test_user.id, EntryModel.id == entry_id)
     )
     assert entry
     assert data["id"] == entry.id
@@ -78,9 +76,7 @@ async def test_delete_entry(authorized_client, test_entry, test_user, db_session
     from app.models.models import EntryModel
 
     entry = await db_session.scalar(
-        select(EntryModel).where(
-            EntryModel.user_id == test_user.id, EntryModel.id == test_entry.id
-        )
+        select(EntryModel).where(EntryModel.user_id == test_user.id, EntryModel.id == test_entry.id)
     )
     assert entry is None
 
@@ -97,9 +93,7 @@ async def test_get_nonexistent_entry(authorized_client):
 
 @pytest.mark.asyncio
 async def test_get_someones_entry(client, test_entry):
-    await client.post(
-        "/auth/register", json={"email": "user2@example.com", "password": "password"}
-    )
+    await client.post("/auth/register", json={"email": "user2@example.com", "password": "password"})
 
     login_response = await client.post(
         "/auth/login", data={"username": "user2@example.com", "password": "password"}

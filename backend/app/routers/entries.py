@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, Query, status
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,17 +19,19 @@ router = APIRouter()
 
 @router.get("", response_model=list[Entry])
 async def get_entries(
-    db: AsyncSession = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
-    entry_service: EntryService = Depends(get_entry_service),
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[UserModel, Depends(get_current_user)],
+    entry_service: Annotated[EntryService, Depends(get_entry_service)],
     start_date: str | None = None,
     end_date: str | None = None,
-    tags: list[str] | None = Query(
-        None,
-        min_length=1,
-        max_length=5,
-        description="Add up to 5 tags (optional). Each tag between 3 and 20 characters.",
-    ),
+    tags: Annotated[
+        list[str] | None,
+        Query(
+            min_length=1,
+            max_length=5,
+            description="Add up to 5 tags (optional). Each tag between 3 and 20 characters.",
+        ),
+    ] = None,
 ) -> list[Entry]:
     return await entry_service.get_entries_service(
         db=db,
@@ -39,7 +43,7 @@ async def get_entries(
 
 
 @router.get("/{id}", response_model=Entry)
-async def get_entry(entry: EntryModel = Depends(validate_entry)) -> Entry:
+async def get_entry(entry: Annotated[EntryModel, Depends(validate_entry)]) -> Entry:
     logger.info("Returning entry data for entry id: {}", entry.id)
     return entry
 
@@ -47,9 +51,9 @@ async def get_entry(entry: EntryModel = Depends(validate_entry)) -> Entry:
 @router.post("", response_model=Entry, status_code=status.HTTP_201_CREATED)
 async def create_entry(
     entry_data: EntryCreate,
-    db: AsyncSession = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
-    entry_service: EntryService = Depends(get_entry_service),
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[UserModel, Depends(get_current_user)],
+    entry_service: Annotated[EntryService, Depends(get_entry_service)],
 ) -> Entry:
     return await entry_service.create_entry_service(
         entry_data=entry_data, db=db, current_user=current_user
@@ -59,19 +63,17 @@ async def create_entry(
 @router.patch("/{id}", response_model=Entry)
 async def update_entry(
     update_data: EntryUpdate,
-    entry: EntryModel = Depends(validate_entry),
-    db: AsyncSession = Depends(get_db),
-    entry_service: EntryService = Depends(get_entry_service),
+    entry: Annotated[EntryModel, Depends(validate_entry)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    entry_service: Annotated[EntryService, Depends(get_entry_service)],
 ) -> Entry:
-    return await entry_service.update_entry_service(
-        update_data=update_data, entry=entry, db=db
-    )
+    return await entry_service.update_entry_service(update_data=update_data, entry=entry, db=db)
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_entry(
-    entry: EntryModel = Depends(validate_entry),
-    db: AsyncSession = Depends(get_db),
-    entry_service: EntryService = Depends(get_entry_service),
+    entry: Annotated[EntryModel, Depends(validate_entry)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    entry_service: Annotated[EntryService, Depends(get_entry_service)],
 ) -> None:
     return await entry_service.delete_entry_service(entry=entry, db=db)

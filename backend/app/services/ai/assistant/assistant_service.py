@@ -107,7 +107,8 @@ class AssistantService(AssistantBase):
                 instructions=tool_system_prompt,
                 input=query_content,
                 tools=TOOLS,
-                parallel_tool_calls=False,  # Possible future implementation of multiple tool calls execution
+                parallel_tool_calls=False,
+                # Possible future implementation of multiple tool calls execution
                 temperature=0.0,
             )
             tool_calls = []
@@ -122,9 +123,7 @@ class AssistantService(AssistantBase):
                     )
             if not tool_calls:
                 logger.info("No tool calls were made, returning response from LLM")
-                yield response.output_text or (
-                    "I am sorry but I could not make that request"
-                )
+                yield response.output_text or ("I am sorry but I could not make that request")
                 return
             used_tools = await self.executor.execute_tool(
                 tool_calls=tool_calls,

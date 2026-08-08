@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,9 +15,9 @@ router = APIRouter()
 @router.post("")
 async def assistant_response(
     user_query: QuerySchema,
-    current_user: UserModel = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-    assistant_service: AssistantBase = Depends(get_assistant_service),
+    current_user: Annotated[UserModel, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    assistant_service: Annotated[AssistantBase, Depends(get_assistant_service)],
 ) -> StreamingResponse:
     return StreamingResponse(
         assistant_service.stream_response(

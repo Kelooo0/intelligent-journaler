@@ -18,9 +18,7 @@ class AuthService:
         logger.debug("Checking if user already exists")
         from app.models.models import UserModel
 
-        existing_user = await db.scalar(
-            select(UserModel).where(UserModel.email == email)
-        )
+        existing_user = await db.scalar(select(UserModel).where(UserModel.email == email))
         if existing_user:
             logger.error("User already exists")
             raise HTTPException(
@@ -50,9 +48,7 @@ class AuthService:
     def verify_password(password: str, password_hash: str) -> bool:
         return bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8"))
 
-    async def authenticate_user(
-        self, email: str, password: str, db: AsyncSession
-    ) -> UserModel:
+    async def authenticate_user(self, email: str, password: str, db: AsyncSession) -> UserModel:
         logger.debug("Authenticating user logging data")
         user = await db.scalar(select(UserModel).where(UserModel.email == email))
         if not user or not self.verify_password(password, user.password):
@@ -69,13 +65,9 @@ class AuthService:
     def create_access_token(data: dict) -> str:
         logger.debug("Creating user access token")
         to_encode = data.copy()
-        expire = datetime.now(UTC) + timedelta(
-            minutes=settings.ACCESS_TOKEN_EXPIRES_MINUTES
-        )
+        expire = datetime.now(UTC) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRES_MINUTES)
         to_encode.update({"exp": expire})
-        access_token = jwt.encode(
-            to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
-        )
+        access_token = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
         logger.info("Succesfully created user access token")
         return access_token
 

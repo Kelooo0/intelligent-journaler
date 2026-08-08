@@ -58,7 +58,8 @@ CREATE_ENTRY_TOOL: FunctionToolParam = {
                             "The exact journal entry content provided by the user. "
                             "Remove only command phrases used to request creation, such as "
                             "'create an entry', 'save this', or 'add to my journal'. "
-                            "Preserve the user's original meaning, wording, language, tone, and details. "
+                            "Preserve the user's original meaning,"
+                            " wording, language, tone, and details. "
                             "Do not summarize, rewrite, expand, correct, or add information."
                         ),
                     }
@@ -72,9 +73,7 @@ CREATE_ENTRY_TOOL: FunctionToolParam = {
 FIND_MATCHING_TOOL: FunctionToolParam = {
     "type": "function",
     "name": "find_matching",
-    "description": (
-        "Finds the most relevant journal entries based on semantic similarity"
-    ),
+    "description": ("Finds the most relevant journal entries based on semantic similarity"),
     "parameters": {
         "type": "object",
         "properties": {
@@ -85,7 +84,8 @@ FIND_MATCHING_TOOL: FunctionToolParam = {
                     "Remove command phrases such as 'show me' or 'find my entries' and remove "
                     "date expressions that are represented by start_date or end_date. "
                     "Preserve the user's original meaning, language, key topics, emotions, "
-                    "events, people, and context. Do not add information that the user did not provide."
+                    "events, people, and context. "
+                    "Do not add information that the user did not provide."
                 ),
             },
             "start_date": {

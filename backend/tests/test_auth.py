@@ -15,9 +15,7 @@ async def test_register_client(client):
 
 @pytest.mark.asyncio
 async def test_login_success(client):
-    await client.post(
-        "/auth/register", json={"email": "user@example.com", "password": "password"}
-    )
+    await client.post("/auth/register", json={"email": "user@example.com", "password": "password"})
 
     response = await client.post(
         "/auth/login", data={"username": "user@example.com", "password": "password"}
@@ -30,9 +28,7 @@ async def test_login_success(client):
 
 @pytest.mark.asyncio
 async def test_login_wrong_password(client):
-    await client.post(
-        "/auth/register", json={"email": "user@example.com", "password": "password"}
-    )
+    await client.post("/auth/register", json={"email": "user@example.com", "password": "password"})
 
     response = await client.post(
         "/auth/login", data={"username": "user@example.com", "password": "password1"}

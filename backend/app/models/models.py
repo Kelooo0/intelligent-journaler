@@ -50,9 +50,7 @@ class EntryModel(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     owner = relationship("UserModel", back_populates="entries", lazy="joined")
-    tags = relationship(
-        "TagModel", secondary=entry_tags, back_populates="entries", lazy="selectin"
-    )
+    tags = relationship("TagModel", secondary=entry_tags, back_populates="entries", lazy="selectin")
 
 
 class TagModel(Base):
