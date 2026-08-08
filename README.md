@@ -38,7 +38,6 @@ Try the deployed application: [Intelligent Journaler](https://intelligent-journa
 ### Homepage
 
 ![Homepage](assets/img/home.PNG)
-![Homepage](assets/img/home.PNG)
 
 ### Journal Dashboard
 
