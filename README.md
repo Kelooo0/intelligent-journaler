@@ -1,77 +1,101 @@
-# Intelligent Journaler
-Intellient Journaler is a REST API used for managing and filtering journal entries. Its key feature is an AI engine that generates insights based on the entry content.
+## About the Project
 
-First, you need to register and sign in; then, you can create, read, update, and delete your entries. It also allows you to filter your entries by date and tags.
+Intelligent Journaler is a web application for managing journal entries, featuring an AI-powered assistant that generates insights based on entry content.
+
+Users can create, view, update, and delete entries, as well as filter them by date and tags. The assistant can also help create new entries and find specific information within the user's journal.
+
+The AI features are powered by the OpenAI API. An API key is required to use the real AI integration locally. For security and cost-control purposes, the version deployed on Render uses mock AI responses.
+
 
 ## Features
 
-- Entry management
-- JWT Authorization
-- Filtering by tags and date
-- AI generated insights
+- JWT Authentication — secure user registration and sign-in.
+- Entry Management — create, view, update, and delete journal entries.
+- Filtering — filter entries by tags and date.
+- AI-Generated Insights — generate insights based on journal entry content.
+- RAG-Based Search — retrieve relevant information from existing entries.
+- AI Function Calling — allow the assistant to perform supported journal operations.
+- React Frontend — responsive user interface built with React.
 
 ## Showcase
 
-![Post method in Swagger](assets/img/post_method.png)
-![Tests showcase](assets/img/tests.png)
+### Video Demo
+
+[Watch the Intelligent Journaler demo](https://youtu.be/3vyLvhI-QzU)
+
+> The video demonstrates the application's main features using the deployed version on Render. The AI assistant is shown running locally with the real OpenAI integration, while the deployed version uses mock AI responses for security and cost-control purposes.
+
+### Screenshots
+
+#### Tests
+
+![Tests](assets/img/pytest.PNG)
+
+#### Journal Dashboard
+
+![Home page](assets/img/home.PNG)
+
+#### Journal Dashboard
+
+![Journal dashboard](assets/img/dashboard.PNG)
+
+#### Entry Editor
+
+![Entry details](assets/img/details.PNG)
+
+#### AI assistant
+
+![AI assistant](assets/img/assistant.PNG)
+
 
 ## Installation
 
+### Prerequisites
+
+Make sure Git, Docker Desktop, and Node.js are installed.
+
 ### 1. Clone the repository
 
-- git clone https://github.com/Kelooo0/intelligent-journaler.git
-- cd intelligent-journaler
+```
+git clone https://github.com/Kelooo0/intelligent-journaler.git
+cd intelligent-journaler
+```
 
-### 2. Create .env file
+### 2. Configure environment variables
 
-- Using .env.example file create .env file
-- Change SECRET_KEY to a safe and long string of characters
-- Set API_KEY to your gemini api key created at: https://aistudio.google.com/
+Navigate to the backend directory, create a .env file based on .env.example, set SECRET_KEY to a long and secure value, and optionally provide your OpenAI API key:
 
+```
+cd backend
+cp .env.example .env
+
+SECRET_KEY=your-secure-secret-key
+API_KEY=your-openai-api-key
+```
+
+The API key can be generated on the [OpenAI Platform](https://platform.openai.com/). If left empty, real AI features will not be available.
+
+Next, create the frontend environment file:
+
+```
+cd ../frontend
+cp .env.example .env
+```
 
 ### 3. Run the application
 
-1. First download and run docker desktop app
-2. Make sure you docker Docker Desktop app is running
-3. Choose one of the options below to run in your designated terminal
-    - Development Variant: docker compose up --build
-    - Production Variant: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-4. After running the app go to localhost:8000/docs on dev variant or localhost:80/docs on prod variant
-5. Then after you register and sign in you can test all endpoints using swagger
+Make sure Docker Desktop is running. From the project root directory, start the backend services:
 
-## Project structure
+```
+docker compose --env-file ./backend/.env up -d --build
+```
 
-```text
-intelligent-journaler/
-├── alembic/                    # Migrations folder
-├── app/                        # Main app package
-│   ├── routers/                # FastAPI routers
-│   │   ├── __init__.py
-│   │   ├── auth.py             # Authentication endpoints
-│   │   └── entries.py          # Entries endpoints
-│   ├── services/
-│   │   ├── ai_service.py       # AI insights generating service
-│   │   ├── auth_service.py     # Service for registering and signing in user
-│   │   ├── entries_service.py  # Service for entries CRUD
-│   │   └── tags_service.py     # Service for operations on tags
-│   ├── __init__.py
-│   ├── config.py               # All app settings
-│   ├── database.py             # Database configuration file
-│   ├── main.py                 # App initialization file
-│   ├── models.py               # Database models file
-│   └── schemas.py              # Pydantic data schemas
-├── tests/
-│   ├── conftest.py             # File for pytest fixtures
-│   ├── test_auth.py            # Authentication tests
-│   └── test_entries.py         # Entries tests
-├── .env                        # Sensitive settings
-├── .env.example                # Example settings for .env
-├── .gitignore                  # Files to ignore for git
-├── alembic.ini
-├── docker-compose.override.yml # Docker compose file for development use
-├── docker-compose.prod.yml     # Docker compose file for production use
-├── docker-compose.yml          # Base docker compose settings
-├── Dockerfile                  # Docker image building settings
-├── pyproject.toml              # Additional pytest settings
-├── README.md
-└── requirements.txt            # Application dependencies
+Then install the frontend dependencies and start the development server:
+
+```
+cd frontend
+npm install
+npm run dev
+```
+
+The application will be available at http://localhost:5173.
