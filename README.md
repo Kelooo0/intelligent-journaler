@@ -29,6 +29,8 @@ The AI features are powered by the OpenAI API. An API key is required to use the
 
 Try the deployed application: [Intelligent Journaler](https://intelligent-journaler.onrender.com)
 
+> The first request may take a moment while the application starts up.
+
 ## Screenshots
 
 ### Tests
@@ -73,11 +75,11 @@ Navigate to the backend directory, create a .env file based on .env.example, set
 cd backend
 cp .env.example .env
 
-SECRET_KEY=your-secure-secret-key
-API_KEY=your-openai-api-key
+SECRET_KEY=your-secret-key
+API_KEY=your-api-key
 ```
 
-The API key can be generated on the [OpenAI Platform](https://platform.openai.com/). If left empty, real AI features will not be available.
+The API key can be generated on the [OpenAI Platform](https://platform.openai.com/). To enable real AI features, set API_KEY to your OpenAI API key and change LLM_PROVIDER value from "mock" to "openai".
 
 Next, create the frontend environment file:
 
